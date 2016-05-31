@@ -1,0 +1,6 @@
+HyperCard/bin
+HyperCard/obj
+Player/bin
+Player/obj
+*.suo
+*.psess

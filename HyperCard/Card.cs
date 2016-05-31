@@ -1,0 +1,292 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace HyperCard
+{
+    [Flags]
+    public enum CardFlags : ushort
+    {
+        DontSearch = 2048,
+        NotShowPict = 4096,
+        CantDelete = 8192
+    }
+
+    [Flags]
+    public enum PartFlags : ushort
+    {
+        NotEnabledLockText = 1,
+        AutoTab = 2,
+        NotFixedLineHeight = 4,
+        SharedText = 8,
+        DontSearch = 16,
+        DontWrap = 32,
+        NotVisible = 64
+    }
+
+    [Flags]
+    public enum PartStyle : byte
+    {
+        Transparent = 0,
+        Opaque = 1,
+        Rectangle = 2,
+        RountRectangle = 3,
+        Shadow = 4,
+        CheckBox = 5,
+        RadioButton = 6,
+        Scrolling = 7,
+        Standard = 8,
+        Default = 9,
+        Oval = 10,
+        Popup = 11
+    }
+
+    public enum PartType : byte
+    {
+        Button = 1,
+        Field = 2
+    }
+
+    public enum TextAlign : short
+    {
+        Left = 0,
+        Center = 1,
+        Right = -1
+    }
+
+    [Flags]
+    public enum TextStyle : ushort
+    {
+        Bold = 1,
+        Italic = 2,
+        Underline = 4,
+        Outline = 8,
+        Shadow = 16,
+        Condense = 32,
+        Extend = 64,
+        Group = 128
+    }
+
+    public class Card
+    {
+        public int CardID { get; private set; }
+
+        public int BitmapID { get; private set; }
+
+        public int BackgroundID { get; private set; }
+
+        public int PageID { get; private set; }
+
+        public CardFlags Flags { get; set; }
+
+        public List<Part> Parts { get; private set; }
+
+        public string Name { get; set; }
+
+        public string Script { get; set; }
+
+        public Card(BigEndianBinaryReader reader, int cardChunkSize, int cardID)
+        {
+            Parts = new List<Part>();
+
+            long nextBlock = reader.Position + cardChunkSize - 12;
+
+            //CardID = reader.ReadInt32();
+            CardID = cardID;
+            reader.ReadInt32(); // filler
+            BitmapID = reader.ReadInt32();
+            Flags = (CardFlags)reader.ReadInt16();
+
+            reader.ReadBytes(10);
+
+            PageID = reader.ReadInt32();
+            BackgroundID = reader.ReadInt32();
+            int partCount = reader.ReadInt16();
+
+            reader.ReadBytes(6);
+            int partContentCount = reader.ReadInt16();
+            reader.ReadBytes(4);
+
+            for (int i = 0; i < partCount; i++)
+            {
+                Parts.Add(new Part(reader));
+            }
+
+            for (int i = 0; i < partContentCount; i++)
+            {
+                short partContentID = reader.ReadInt16();
+                short partContentSize = reader.ReadInt16();
+
+                reader.Position += partContentSize;
+
+                if ((reader.Position % 2) != 0) reader.Position += (reader.Position % 2);
+            }
+
+            Name = reader.ReadString();
+
+            Script = reader.ReadString().Replace((char)65533, '∞');
+            reader.Position = nextBlock;
+        }
+    }
+
+    public class Background
+    {
+        public int BackgroundID { get; private set; }
+
+        public int BitmapID { get; private set; }
+
+        public int NextBackgroundID { get; private set; }
+
+        public int PreviousBackgroundID { get; private set; }
+
+        public CardFlags Flags { get; set; }
+
+        public List<Part> Parts { get; private set; }
+
+        public string Name { get; set; }
+
+        public string Script { get; set; }
+
+        public Background(BigEndianBinaryReader reader, int cardChunkSize, int cardID)
+        {
+            Parts = new List<Part>();
+
+            long nextBlock = reader.Position + cardChunkSize - 12;
+
+            BackgroundID = cardID;
+            reader.ReadInt32(); // filler
+            BitmapID = reader.ReadInt32();
+            Flags = (CardFlags)reader.ReadInt16();
+
+            reader.ReadBytes(6);
+
+            NextBackgroundID = reader.ReadInt32();
+            PreviousBackgroundID = reader.ReadInt32();
+            int partCount = reader.ReadInt16();
+
+            reader.ReadBytes(6);
+            int partContentCount = reader.ReadInt16();
+            reader.ReadBytes(4);
+
+            for (int i = 0; i < partCount; i++)
+            {
+                Parts.Add(new Part(reader));
+            }
+
+            for (int i = 0; i < partContentCount; i++)
+            {
+                short partContentID = reader.ReadInt16();
+                short partContentSize = reader.ReadInt16();
+
+                reader.Position += partContentSize;
+
+                if ((reader.Position % 2) != 0) reader.Position += (reader.Position % 2);
+            }
+
+            Name = reader.ReadString();
+
+            Script = reader.ReadString().Replace((char)65533, '∞');
+            reader.Position = nextBlock;
+        }
+    }
+
+    public struct Rect
+    {
+        public short Top;
+        public short Left;
+        public short Bottom;
+        public short Right;
+
+        public short Width { get { return (short)(Right - Left); } }
+
+        public short Height { get { return (short)(Bottom - Top); } }
+
+        public Rect(BigEndianBinaryReader reader)
+        {
+            Top = reader.ReadInt16();
+            Left = reader.ReadInt16();
+            Bottom = reader.ReadInt16();
+            Right = reader.ReadInt16();
+        }
+    }
+
+    public class Part
+    {
+        public short PartID { get; private set; }
+
+        public PartType Type { get; private set; }
+
+        public PartFlags Flags { get; set; }
+
+        public Rect Rect { get; set; }
+
+        public PartStyle Style { get; set; }
+
+        private short titleWidthOrLastSelectedLine;
+        private short iconIDOrFirstSelectedLine;
+
+        public short TitleWidth
+        {
+            get { return titleWidthOrLastSelectedLine; }
+            set { titleWidthOrLastSelectedLine = value; }
+        }
+
+        public short LastSelectedLine
+        {
+            get { return titleWidthOrLastSelectedLine; }
+            set { titleWidthOrLastSelectedLine = value; }
+        }
+
+        public short IconID
+        {
+            get { return iconIDOrFirstSelectedLine; }
+            set { iconIDOrFirstSelectedLine = value; }
+        }
+
+        public short FirstSelectedLine
+        {
+            get { return iconIDOrFirstSelectedLine; }
+            set { iconIDOrFirstSelectedLine = value; }
+        }
+
+        public TextAlign TextAlign { get; set; }
+
+        public short TextFont { get; set; }
+
+        public short TextSize { get; set; }
+
+        public TextStyle TextStyle { get; set; }
+
+        public short TextHeight { get; set; }
+
+        public string Name { get; set; }
+
+        public string Script { get; set; }
+
+        public Part(BigEndianBinaryReader reader)
+        {
+            short size = reader.ReadInt16();
+            long nextBlock = reader.Position + size - 2;
+
+            PartID = reader.ReadInt16();
+            Type = (PartType)reader.ReadByte();
+            Flags = (PartFlags)reader.ReadByte();
+            Rect = new Rect(reader);
+            byte moreFlags = reader.ReadByte();
+            Style = (PartStyle)reader.ReadByte();
+            titleWidthOrLastSelectedLine = reader.ReadInt16();
+            iconIDOrFirstSelectedLine = reader.ReadInt16();
+            TextAlign = (TextAlign)reader.ReadInt16();
+            TextFont = reader.ReadInt16();
+            TextSize = reader.ReadInt16();
+            TextStyle = (TextStyle)reader.ReadInt16();
+            TextHeight = reader.ReadInt16();
+            Name = reader.ReadString();
+            reader.ReadByte();  // always zero
+            Script = reader.ReadString();
+
+            reader.Position = nextBlock;
+            //Console.WriteLine("nextBlock: {0}   actual position: {1}", nextBlock, reader.Position);
+        }
+    }
+}

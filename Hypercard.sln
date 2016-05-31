@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HyperCard", "Hypercard\HyperCard.csproj", "{84D18219-FBF3-45E2-BC12-EDAC1269147A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Player", "Player\Player.csproj", "{03AE9DCA-1E01-4146-BD55-8D111EF23886}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{84D18219-FBF3-45E2-BC12-EDAC1269147A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84D18219-FBF3-45E2-BC12-EDAC1269147A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84D18219-FBF3-45E2-BC12-EDAC1269147A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84D18219-FBF3-45E2-BC12-EDAC1269147A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03AE9DCA-1E01-4146-BD55-8D111EF23886}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03AE9DCA-1E01-4146-BD55-8D111EF23886}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03AE9DCA-1E01-4146-BD55-8D111EF23886}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03AE9DCA-1E01-4146-BD55-8D111EF23886}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

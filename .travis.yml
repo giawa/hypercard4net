@@ -1,0 +1,4 @@
+## Travis CI Integration
+
+language: csharp
+solution: Hypercard.sln

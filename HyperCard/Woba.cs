@@ -87,31 +87,35 @@ namespace HyperCard
 
         private byte[] ProcessWoba(byte[] data, int size, int bx8, int y, int rowwidth8, int height)
         {
-            byte[] patternBuffer = new byte[8];
-
             int bx = bx8 / 8;
             int rowwidth = rowwidth8 / 8;
             int dx = 0, dy = 0, x = 0;
             int repeat = 1;
+            byte[] operandData = new byte[256];
+            int j = 0, i = 0;
+            int nd = 0, nz = 0;
 
+            // initialize the pattern buffer
+            byte[] patternBuffer = new byte[8];
             patternBuffer[0] = patternBuffer[2] = patternBuffer[4] = patternBuffer[6] = 170;
             patternBuffer[1] = patternBuffer[3] = patternBuffer[5] = patternBuffer[7] = 85;
 
+            // create buffers of varying sized to be used by xornstr and other functions
             byte[] buffer1 = new byte[rowwidth];
             byte[] buffer2 = new byte[rowwidth];
             srcBlock = new uint[rowwidth / 4];
             destBlock = new uint[rowwidth / 4];
             destBlock8 = new ulong[rowwidth / 8];
             srcBlock8 = new ulong[rowwidth / 8];
-            byte[] operandData = new byte[256];
-            int j = 0, i = 0;
-            int nd = 0, nz = 0;
 
+            // calculate the size of the 1bpp bitmap
             int width = BitmapRight - BitmapLeft;
             rowlength = (((width * 1) / 8) + ((((width * 1) % 8) != 0) ? 1 : 0));   // assume a depth of 1
             byte[] pixelData = new byte[rowlength * (BitmapBottom - BitmapTop)];
 
-            if ((rowwidth & 0x07) == 0) xornstr = xornstr8;
+            // xornstr is a critical section of code (~20%+) which can be sped up if rowwidth is modulo 4 or modulo 8
+            // by taking advantage of int or long calculations (processing 4 or 8 bytes at a time) instead of byte by byte
+            if ((rowwidth & 0x07) == 0) xornstr = xornstr8;     // Note:  This may be slower on 32bit machines
             else if ((rowwidth & 0x03) == 0) xornstr = xornstr4;
             else xornstr = xornstr1;
 
@@ -358,6 +362,7 @@ namespace HyperCard
         {
             int[] expandedData = new int[pixelData.Length * 8];
 
+            // convert a 1bpp bitmap into a 32bpp bitmap
             for (int i = 0; i < pixelData.Length; i++)
             {
                 for (int j = 0; j < 8; j++)
@@ -371,6 +376,7 @@ namespace HyperCard
                 }
             }
 
+            // convert our int array into a bitmap that can be used by GDI+ or even saved to a file
             Bitmap bitmap = new Bitmap(BitmapRight - BitmapLeft, BitmapBottom - BitmapTop);
             var bits = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), System.Drawing.Imaging.ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format32bppRgb);
             Marshal.Copy(expandedData, 0, bits.Scan0, expandedData.Length);

@@ -43,6 +43,7 @@
     <Compile Include="CardRenderer.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Icon.cs" />
     <Compile Include="Window.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -51,6 +52,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Include="Icons\AddColor OFF.png" />
     <EmbeddedResource Include="Window.resx">
       <DependentUpon>Window.cs</DependentUpon>
     </EmbeddedResource>
@@ -62,6 +64,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -81,6 +84,591 @@
       <Project>{84d18219-fbf3-45e2-bc12-edac1269147a}</Project>
       <Name>HyperCard</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Addcolor ON.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Address Card A.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Address Card B .png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Address.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Addresses!.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Apple events.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Application.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Appointments.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Art Bits.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Art Ideas.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Audio Help.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Audio note.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Background Art.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Beanie Copter.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Big Tone.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Bill.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Bill%27s Rolo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Black Down Arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Black Next Arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Black Prev Arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Black Return Arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Black Up Arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Black.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Blk Help.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Blk Next Arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Blk Prev Arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Boxed Question.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Button Ideas.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Calendar Page.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Card Ideas.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Clicked Close Box.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Close Box.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Closer Look.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Color Tools #1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Color Tools.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Compass.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Cordy.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Datebook Day.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Datebook Day-Gray.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Datebook Year.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Datebook Year-Gray.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Dice,1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Dice,2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Dice,3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Dice,4.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Dice,5.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Dice,6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Document.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Down Arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Draw Doc.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Ex Lge Next Hand.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Ex Lge Prev Hand.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Eye.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\First Card Arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Fleet Next Arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Fleet Prev Arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Fleet Return Arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Game.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Glimmer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Good Question.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Graph Maker.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\HC Help.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\HC Tour.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\help 1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\help 3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Home Again.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Home Alone.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Home Baked.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Home Base.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Home Big 2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Home Brew.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Home Loan.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Home Made.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Home.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\HT Reference.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\HyperCard.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Icon Substitute.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\ImageWriter.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Info.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Juggler 2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Juggler 3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Juggler 4.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Large Home Base.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\LaserWriter.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Last Card Arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\LEFT tri.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Lg Int%27l Help.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Lge Down Arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Lge First Card Arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Lge Help.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Lge Last Card Arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Lge Next Arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Lge Next Hand.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Lge Prev Arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Lge Prev Hand.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Lge Return Arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Lge Tell About....png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Lge Up Arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Link To.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Lt Arrow Next.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Lt Arrow Prev.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Mac.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\MacDraw.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\MacPaint.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\MacWrite.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Mail Merge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Marker Cross.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Med Help.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Med Int%27l Help.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Med Next Hand.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Med Prev Hand.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Med Tell About....png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Memo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Memo-Gray.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Minute Home.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Music.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Mystery  Dot.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\National Directory.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\New Home prefs.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\New Sort.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Next Arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Next Double .png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\NXT.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Old Style Phone.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Outline.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Paint Doc.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Phone Dialer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Phone.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Practice #1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Practice Stack.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Prev Arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Prev. Double.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\PREV.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Puzzle.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Quicktime.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Readymade Buttons.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Readymade Fields.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\ResEdit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Return Arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\right tri.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Robin Stylee.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Scan.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Scanned Art2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Scriptable Text Editor #1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Scriptable Text Editor #2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Search.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Sm Left Triangle.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Sm Tell About....png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Small Button.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Small Home Base.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Small left arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Small Right Arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Small Rt Triangle.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Small Speaker.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Sml Black Home.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Sml Down Arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Sml First Card Arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Sml Help.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Sml Home.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Sml Last Card Arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Sml Next Arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Sml Next Hand.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Sml Prev Arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Sml Prev Hand.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Sml Return Arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Sml Up Arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Sml White Home.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Sort.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Stack Help.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Stack Ideas.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Stack Info Rt Tri.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Stack Info.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Stack Templates.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Stack.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Stacky.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Text Controls.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\TINY Home.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\TINY Phone.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\To Do.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Touch Tone.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\TrainSet.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Unmark.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Up Arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Visual Effect.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\White Home.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\White.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Write Doc.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Wrong Number.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\XL Down Arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\XL First Card Arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\XL Last Card Arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\XL Next Arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\XL Prev Arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\XL Return Arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\XL Up Arrow.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

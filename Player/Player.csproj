@@ -80,7 +80,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Hypercard\HyperCard.csproj">
+    <ProjectReference Include="..\HyperCard\HyperCard.csproj">
       <Project>{84d18219-fbf3-45e2-bc12-edac1269147a}</Project>
       <Name>HyperCard</Name>
     </ProjectReference>

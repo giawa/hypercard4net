@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 
 namespace HyperCard
@@ -21,6 +22,22 @@ namespace HyperCard
         PrivateAccess = 8192,
         CantDelete = 16384,
         CantModify = 32768
+    }
+
+    public class IconResource
+    {
+        public short ID { get; private set; }
+
+        public string Name { get; set; }
+
+        public Bitmap Bitmap { get; set; }
+
+        public IconResource(short id, string name, string filename)
+        {
+            this.ID = id;
+            this.Name = name;
+            this.Bitmap = HyperCard.Utilities.IconToPng(filename);
+        }
     }
 
     public class StackReader
@@ -69,12 +86,37 @@ namespace HyperCard
 
         public string Name { get; private set; }
 
+        public Dictionary<short, IconResource> IconResources = new Dictionary<short, IconResource>();
+
+        private void ProcessResources(string filename)
+        {
+            FileInfo info = new FileInfo(filename);
+            string directory = info.Directory.FullName + "\\" + info.Name + ".rsrc";
+
+            if (!Directory.Exists(directory)) return;
+
+            foreach (var file in new DirectoryInfo(directory).GetFiles())
+            {
+                if (file.Name.EndsWith(".ICON"))
+                {
+                    string[] split = file.Name.Split(new char[] { '.' });
+
+                    short id = short.Parse(split[0]);
+                    string name = split[1];
+
+                    if (!IconResources.ContainsKey(id)) IconResources.Add(id, new IconResource(id, name, file.FullName));
+                }
+            }
+        }
+
         public StackReader(string filename)
         {
             if (!File.Exists(filename)) return;
 
             FileInfo info = new FileInfo(filename);
             this.Name = info.Name;
+
+            ProcessResources(filename);
 
             using (BigEndianBinaryReader reader = new BigEndianBinaryReader(filename))
             {

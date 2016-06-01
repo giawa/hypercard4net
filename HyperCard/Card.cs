@@ -13,7 +13,7 @@ namespace HyperCard
     }
 
     [Flags]
-    public enum PartFlags : ushort
+    public enum PartFlags : byte
     {
         NotEnabledLockText = 1,
         AutoTab = 2,
@@ -21,7 +21,7 @@ namespace HyperCard
         SharedText = 8,
         DontSearch = 16,
         DontWrap = 32,
-        NotVisible = 64
+        NotVisible = 128
     }
 
     [Flags]
@@ -208,6 +208,11 @@ namespace HyperCard
             Bottom = reader.ReadInt16();
             Right = reader.ReadInt16();
         }
+
+        public System.Drawing.Rectangle ToRectangle()
+        {
+            return new System.Drawing.Rectangle(Left, Top, Width - 1, Height - 1);
+        }
     }
 
     public class Part
@@ -263,6 +268,24 @@ namespace HyperCard
 
         public string Script { get; set; }
 
+        public bool ShowName { get; set; }
+
+        public bool AutoSelect { get; set; }
+
+        public bool Hilight { get; set; }
+
+        public bool ShowLines { get; set; }
+
+        public bool AutoHighlight { get; set; }
+
+        public bool WideMargins { get; set; }
+
+        public bool NotSharedHighlight { get; set; }
+
+        public bool MultipleLines { get; set; }
+
+        public byte Family { get; set; }
+
         public Part(BigEndianBinaryReader reader)
         {
             short size = reader.ReadInt16();
@@ -287,6 +310,12 @@ namespace HyperCard
 
             reader.Position = nextBlock;
             //Console.WriteLine("nextBlock: {0}   actual position: {1}", nextBlock, reader.Position);
+
+            ShowName = AutoSelect = (moreFlags & 0x80) == 0x80;
+            Hilight = ShowLines = (moreFlags & 0x40) == 0x40;
+            AutoHighlight = WideMargins = (moreFlags & 0x20) == 0x20;
+            NotSharedHighlight = MultipleLines = (moreFlags & 0x10) == 0x10;
+            Family = (byte)(moreFlags & 0x0f);
         }
     }
 }

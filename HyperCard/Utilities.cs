@@ -24,7 +24,7 @@ namespace HyperCard
         [DllImport("gdi32.dll")]
         private static extern bool BitBlt(IntPtr hdcDest, int nXDest, int nYDest, int nWidth, int nHeight, IntPtr hdcSrc, int nXSrc, int nYSrc, int dwRop);
 
-        public static void IconToPng(string filename)
+        public static Bitmap IconToPng(string filename)
         {
             using (BigEndianBinaryReader reader = new BigEndianBinaryReader(filename))
             {
@@ -90,7 +90,9 @@ namespace HyperCard
                 g.Dispose();
 
                 // finally write it out to a file - what a mess!
-                bitmap.Save(filename.Replace(".ICON", ".png"), System.Drawing.Imaging.ImageFormat.Png);
+                //bitmap.Save(filename.Replace(".ICON", ".png"), System.Drawing.Imaging.ImageFormat.Png);
+
+                return bitmap;
             }
         }
     }

@@ -10,3 +10,5 @@ Bits and pieces of a HyperCard parser/player in C#
 
 ## Screenshots
 ![Home vs. Home](https://giawa.github.com/hypercard/home_vs_home.png)
+
+![Graph Maker vs. Graph Maker](https://giawa.github.com/hypercard/graph_vs_graph.png)

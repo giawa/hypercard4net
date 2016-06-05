@@ -158,17 +158,16 @@ namespace Player
                     case HyperCard.PartStyle.Transparent: break;
                     case HyperCard.PartStyle.Rectangle:
                         using (Pen blackPen = new Pen(Color.Black))
-                            g.DrawRectangle(blackPen, part.Rect.ToRectangle());
+                            g.DrawRectangle(blackPen, new Rectangle(0, 0, part.Rect.Width - 1, part.Rect.Height - 1));
                         break;
                     case HyperCard.PartStyle.Opaque:
                         using (Brush whiteBrush = new SolidBrush(Color.White))
-                            g.FillRectangle(whiteBrush, part.Rect.ToRectangle());
+                            g.FillRectangle(whiteBrush, new Rectangle(0, 0, part.Rect.Width - 1, part.Rect.Height - 1));
                         break;
                     default:
                         Console.WriteLine("Unsupported button style: " + part.Style.ToString());
                         break;
                 }
-
                 int textHeight = 0;
 
                 // draw the text in this button

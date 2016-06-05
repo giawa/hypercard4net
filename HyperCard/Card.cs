@@ -323,7 +323,7 @@ namespace HyperCard
 
         public static void ProcessPartContents(List<Part> parts, BigEndianBinaryReader reader)
         {
-            short partContentID = reader.ReadInt16();
+            short partContentID = Math.Abs(reader.ReadInt16());
             short partContentSize = reader.ReadInt16();
 
             if (partContentSize > 1)

@@ -22,6 +22,14 @@ namespace Player
                 //case 31885: return Properties.Resources.HT_Reference;
                 //case 28023: return Properties.Resources.Large_Home_Base;
 
+                case 17937: return Properties.Resources.Wrong_Number;
+                case 17890: return Properties.Resources.Big_Tone;
+                case 17896: return Properties.Resources.Cordy;
+                case 17838: return Properties.Resources.Robin_Stylee;
+                case 10935: return Properties.Resources.Home_Brew;
+                case 8323: return Properties.Resources.Home_Baked;
+                case 13745: return Properties.Resources.Home_Alone;
+
                 case 13744: return Properties.Resources.Home_Loan;
                 case 2181: return Properties.Resources.TINY_Home;
                 case 15993: return Properties.Resources.Home_Made;

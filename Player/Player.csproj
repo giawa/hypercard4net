@@ -43,6 +43,7 @@
     <Compile Include="CardRenderer.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Font.cs" />
     <Compile Include="Icon.cs" />
     <Compile Include="Window.cs">
       <SubType>Form</SubType>
@@ -52,6 +53,8 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Include="Fonts\ChicagoFLF.ttf" />
+    <None Include="Fonts\Geneva.ttf" />
     <None Include="Icons\AddColor OFF.png" />
     <EmbeddedResource Include="Window.resx">
       <DependentUpon>Window.cs</DependentUpon>

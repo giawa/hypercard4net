@@ -124,7 +124,7 @@ namespace HyperCard
 
             Name = reader.ReadString();
 
-            Script = reader.ReadString().Replace((char)65533, '∞');
+            Script = reader.ReadString();
             reader.Position = nextBlock;
         }
     }
@@ -185,7 +185,7 @@ namespace HyperCard
 
             Name = reader.ReadString();
 
-            Script = reader.ReadString().Replace((char)65533, '∞');
+            Script = reader.ReadString();
             reader.Position = nextBlock;
         }
     }

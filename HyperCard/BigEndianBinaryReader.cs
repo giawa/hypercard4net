@@ -30,16 +30,17 @@ namespace HyperCard
             reader = new BinaryReader(File.OpenRead(filename));
         }
 
+        private byte[] stringProcessor = new byte[32768];
+
         public string ReadString()
         {
-            StringBuilder sb = new StringBuilder();
-            char temp;
+            int i = 0;
 
-            while ((temp = (char)reader.ReadByte()) != 0) sb.Append(temp);
+            while ((stringProcessor[i++] = reader.ReadByte()) != 0) ;
 
-            position += sb.Length + 1;
+            position += i;
 
-            return sb.ToString();
+            return Utilities.FromMacRoman(stringProcessor, i - 1);
         }
 
         public char[] ReadChars(int count)

@@ -114,10 +114,24 @@ namespace HyperCard
 
             for (int i = 0; i < partContentCount; i++)
             {
-                short partContentID = reader.ReadInt16();
+                short partContentID = Math.Abs(reader.ReadInt16());
                 short partContentSize = reader.ReadInt16();
 
-                reader.Position += partContentSize;
+                if (partContentSize > 1)
+                {
+                    byte partContentType = reader.ReadByte();
+
+                    if (partContentType == 0)
+                    {
+                        //string temp = new string(reader.ReadChars(partContentSize - 1));
+                        string temp = Utilities.FromMacRoman(reader.ReadBytes(partContentSize - 1), partContentSize - 1);
+                        foreach (var part in Parts)
+                        {
+                            if (part.PartID == partContentID) part.Contents = temp;
+                        }
+                    }
+                    else reader.Position += (partContentSize - 1);
+                }
 
                 if ((reader.Position % 2) != 0) reader.Position += (reader.Position % 2);
             }
@@ -178,7 +192,21 @@ namespace HyperCard
                 short partContentID = reader.ReadInt16();
                 short partContentSize = reader.ReadInt16();
 
-                reader.Position += partContentSize;
+                if (partContentSize > 1)
+                {
+                    byte partContentType = reader.ReadByte();
+
+                    if (partContentType == 0)
+                    {
+                        //string temp = new string(reader.ReadChars(partContentSize - 1));
+                        string temp = Utilities.FromMacRoman(reader.ReadBytes(partContentSize - 1), partContentSize - 1);
+                        foreach (var part in Parts)
+                        {
+                            if (part.PartID == partContentID) part.Contents = temp;
+                        }
+                    }
+                    else reader.Position += (partContentSize - 1);
+                }
 
                 if ((reader.Position % 2) != 0) reader.Position += (reader.Position % 2);
             }
@@ -217,6 +245,8 @@ namespace HyperCard
 
     public class Part
     {
+        public bool Dirty { get; set; }
+
         public short PartID { get; private set; }
 
         public PartType Type { get; private set; }
@@ -272,7 +302,7 @@ namespace HyperCard
 
         public bool AutoSelect { get; set; }
 
-        public bool Hilight { get; set; }
+        public bool Highlight { get; set; }
 
         public bool ShowLines { get; set; }
 
@@ -285,6 +315,10 @@ namespace HyperCard
         public bool MultipleLines { get; set; }
 
         public byte Family { get; set; }
+
+        public string Contents { get; set; }
+
+        public bool Click { get; set; }
 
         public Part(BigEndianBinaryReader reader)
         {
@@ -312,10 +346,15 @@ namespace HyperCard
             //Console.WriteLine("nextBlock: {0}   actual position: {1}", nextBlock, reader.Position);
 
             ShowName = AutoSelect = (moreFlags & 0x80) == 0x80;
-            Hilight = ShowLines = (moreFlags & 0x40) == 0x40;
+            Highlight = ShowLines = (moreFlags & 0x40) == 0x40;
             AutoHighlight = WideMargins = (moreFlags & 0x20) == 0x20;
             NotSharedHighlight = MultipleLines = (moreFlags & 0x10) == 0x10;
             Family = (byte)(moreFlags & 0x0f);
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0} : {1}", Type, Name);
         }
     }
 }

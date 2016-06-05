@@ -114,26 +114,7 @@ namespace HyperCard
 
             for (int i = 0; i < partContentCount; i++)
             {
-                short partContentID = Math.Abs(reader.ReadInt16());
-                short partContentSize = reader.ReadInt16();
-
-                if (partContentSize > 1)
-                {
-                    byte partContentType = reader.ReadByte();
-
-                    if (partContentType == 0)
-                    {
-                        //string temp = new string(reader.ReadChars(partContentSize - 1));
-                        string temp = Utilities.FromMacRoman(reader.ReadBytes(partContentSize - 1), partContentSize - 1);
-                        foreach (var part in Parts)
-                        {
-                            if (part.PartID == partContentID) part.Contents = temp;
-                        }
-                    }
-                    else reader.Position += (partContentSize - 1);
-                }
-
-                if ((reader.Position % 2) != 0) reader.Position += (reader.Position % 2);
+                Part.ProcessPartContents(Parts, reader);
             }
 
             Name = reader.ReadString();
@@ -189,26 +170,7 @@ namespace HyperCard
 
             for (int i = 0; i < partContentCount; i++)
             {
-                short partContentID = reader.ReadInt16();
-                short partContentSize = reader.ReadInt16();
-
-                if (partContentSize > 1)
-                {
-                    byte partContentType = reader.ReadByte();
-
-                    if (partContentType == 0)
-                    {
-                        //string temp = new string(reader.ReadChars(partContentSize - 1));
-                        string temp = Utilities.FromMacRoman(reader.ReadBytes(partContentSize - 1), partContentSize - 1);
-                        foreach (var part in Parts)
-                        {
-                            if (part.PartID == partContentID) part.Contents = temp;
-                        }
-                    }
-                    else reader.Position += (partContentSize - 1);
-                }
-
-                if ((reader.Position % 2) != 0) reader.Position += (reader.Position % 2);
+                Part.ProcessPartContents(Parts, reader);
             }
 
             Name = reader.ReadString();
@@ -318,6 +280,8 @@ namespace HyperCard
 
         public string Contents { get; set; }
 
+        public string[] Lines { get; set; }
+
         public bool Click { get; set; }
 
         public Part(BigEndianBinaryReader reader)
@@ -355,6 +319,34 @@ namespace HyperCard
         public override string ToString()
         {
             return string.Format("{0} : {1}", Type, Name);
+        }
+
+        public static void ProcessPartContents(List<Part> parts, BigEndianBinaryReader reader)
+        {
+            short partContentID = reader.ReadInt16();
+            short partContentSize = reader.ReadInt16();
+
+            if (partContentSize > 1)
+            {
+                byte partContentType = reader.ReadByte();
+
+                if (partContentType == 0)
+                {
+                    //string temp = new string(reader.ReadChars(partContentSize - 1));
+                    string temp = Utilities.FromMacRoman(reader.ReadBytes(partContentSize - 1), partContentSize - 1);
+                    foreach (var part in parts)
+                    {
+                        if (part.PartID == partContentID)
+                        {
+                            part.Contents = temp;
+                            if (temp.Contains("\r")) part.Lines = temp.Split(new char[] { '\r' });
+                        }
+                    }
+                }
+                else reader.Position += (partContentSize - 1);
+            }
+
+            if ((reader.Position % 2) != 0) reader.Position += (reader.Position % 2);
         }
     }
 }

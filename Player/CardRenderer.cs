@@ -54,109 +54,184 @@ namespace Player
         {
             base.OnPaint(pe);
 
+            if (this.Image == null || this.Image.Width != Width || this.Image.Height != Height)
+                this.Image = new Bitmap(Width, Height);
+
+            Graphics g = Graphics.FromImage(this.Image);
+            g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit;
+
             if (stack == null || card == null) return;
 
-            if (backgroundBitmap != null && backgroundBitmap.Image != null) pe.Graphics.DrawImage(backgroundBitmap.Image, new Point(0, 0));
+            if (backgroundBitmap != null && backgroundBitmap.Image != null) g.DrawImage(backgroundBitmap.Image, new Point(0, 0));
             if (cardBitmap != null && cardBitmap.Image != null)
             {
                 ImageAttributes attr = new ImageAttributes();
                 attr.SetColorKey(Color.White, Color.White);
 
-                pe.Graphics.DrawImage(cardBitmap.Image, this.ClientRectangle, 0, 0, cardBitmap.Image.Width, cardBitmap.Image.Height, GraphicsUnit.Pixel, attr);
+                g.DrawImage(cardBitmap.Image, this.ClientRectangle, 0, 0, cardBitmap.Image.Width, cardBitmap.Image.Height, GraphicsUnit.Pixel, attr);
             }
 
             foreach (var part in background.Parts)
             {
-                if (part.Type == HyperCard.PartType.Button) RenderButton(part, pe.Graphics);
-                else RenderField(part, pe.Graphics);
+                if (part.Type == HyperCard.PartType.Button) RenderButton(part, g);
+                else RenderField(part, g);
             }
 
             foreach (var part in card.Parts)
             {
-                if (part.Type == HyperCard.PartType.Button) RenderButton(part, pe.Graphics);
-                else RenderField(part, pe.Graphics);
+                if (part.Type == HyperCard.PartType.Button) RenderButton(part, g);
+                else RenderField(part, g);
             }
+
+            g.Flush();
         }
 
         private void RenderField(HyperCard.Part part, Graphics g)
         {
             // check if this part is not visible
             if (((byte)part.Flags & 0x80) == 0x80) return;
+            if (string.IsNullOrWhiteSpace(part.Contents)) return;
+
+            string fontFamily = (part.Name.StartsWith("Home")) ? "Times New Roman" : "Arial";
 
             using (Brush blackBrush = new SolidBrush(Color.Black))
-            using (System.Drawing.Font buttonFont = new Font("Chicago", part.TextSize - 1, (FontStyle)((int)part.TextStyle & 0x07), GraphicsUnit.Pixel))
+            //using (System.Drawing.Font buttonFont = new Font("Chicago", part.TextSize - 1, (FontStyle)((int)part.TextStyle & 0x07), GraphicsUnit.Pixel))
+            using (System.Drawing.Font fieldFont = MacFont.GetFont(fontFamily, part.TextSize, (FontStyle)((int)part.TextStyle & 0x07)))
             {
                 // measure the width of the string to calculate center/right alignment
-                var textSize = g.MeasureString(part.Name, buttonFont);
+                var textSize = g.MeasureString(part.Contents, fieldFont);
                 float textX = part.Rect.Left;// +(part.Rect.Width >> 1);
                 float textY = part.Rect.Top + (part.Rect.Height >> 1) - textSize.Height / 2;
 
                 if (part.TextAlign == HyperCard.TextAlign.Center) textX += (part.Rect.Width >> 1) - textSize.Width / 2;
                 else if (part.TextAlign == HyperCard.TextAlign.Right) textX += part.Rect.Width - textSize.Width;
 
-                g.DrawString(part.Name, buttonFont, blackBrush, textX, textY);
+                g.DrawString(part.Contents, fieldFont, blackBrush, textX, textY);
             }
         }
 
-        private void RenderButton(HyperCard.Part part, Graphics g)
+        private Dictionary<HyperCard.Part, Bitmap> cachedParts = new Dictionary<HyperCard.Part, Bitmap>();
+
+        private void RenderButton(HyperCard.Part part, Graphics cardBitmap)
         {
-            // check if this part is not visible
-            if (((byte)part.Flags & 0x80) == 0x80) return;
-
-            int xoffset = 0, yoffset = 0;
-
-            switch (part.Style)
+            if (!cachedParts.ContainsKey(part) || part.Dirty)
             {
-                case HyperCard.PartStyle.Transparent: break;
-                case HyperCard.PartStyle.Rectangle:
-                    using (Pen blackPen = new Pen(Color.Black))
-                        g.DrawRectangle(blackPen, part.Rect.ToRectangle());
-                    break;
-                case HyperCard.PartStyle.Opaque:
-                    using (Brush whiteBrush = new SolidBrush(Color.White))
-                        g.FillRectangle(whiteBrush, part.Rect.ToRectangle());
-                    break;
-                default:
-                    Console.WriteLine("Unsupported button style: " + part.Style.ToString());
-                    break;
-            }
-
-            int textHeight = 0;
-
-            if (part.ShowName)
-            {
-                using (Brush blackBrush = new SolidBrush(Color.Black))
-                using (System.Drawing.Font buttonFont = new Font("Chicago", part.TextSize - 1, (FontStyle)((int)part.TextStyle & 0x07), GraphicsUnit.Pixel))
+                // make sure to clean up the old bitmap
+                if (cachedParts.ContainsKey(part))
                 {
-                    // measure the width of the string to calculate center/right alignment
-                    var textSize = g.MeasureString(part.Name, buttonFont);
-                    float textX = part.Rect.Left;
-                    float textY = part.Rect.Top + (part.Rect.Height >> 1) - textSize.Height / 2;
-
-                    if (part.TextAlign == HyperCard.TextAlign.Center) textX += (part.Rect.Width >> 1) - textSize.Width / 2;
-                    else if (part.TextAlign == HyperCard.TextAlign.Right) textX += part.Rect.Width - textSize.Width;
-
-                    if (part.IconID != 0) textY += 16;
-                    textHeight = (int)textSize.Height;
-
-                    g.DrawString(part.Name, buttonFont, blackBrush, textX, textY);
+                    cachedParts[part].Dispose();
+                    cachedParts.Remove(part);
                 }
+
+                Bitmap cachedPart = new Bitmap(part.Rect.Width, part.Rect.Height);
+                Graphics g = Graphics.FromImage(cachedPart);
+                g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit;
+                cachedParts.Add(part, cachedPart);
+
+                if (part.Highlight && part.IconID == 0)
+                {
+                    if (part.ShowName || part.Style != HyperCard.PartStyle.Transparent)
+                    {
+                        using (Brush whiteBrush = new SolidBrush(Color.White))
+                            g.FillRectangle(whiteBrush, part.Rect.ToRectangle());
+                    }
+                    else
+                    {
+                        cardBitmap.Flush();
+                        g.DrawImage(this.Image, new Rectangle(0, 0, part.Rect.Width, part.Rect.Height), new Rectangle(part.Rect.Left, part.Rect.Top, part.Rect.Width, part.Rect.Height), GraphicsUnit.Pixel);
+                    }
+                }
+
+                // check if this part is not visible
+                if (((byte)part.Flags & 0x80) == 0x80) return;
+
+                switch (part.Style)
+                {
+                    case HyperCard.PartStyle.Transparent: break;
+                    case HyperCard.PartStyle.Rectangle:
+                        using (Pen blackPen = new Pen(Color.Black))
+                            g.DrawRectangle(blackPen, part.Rect.ToRectangle());
+                        break;
+                    case HyperCard.PartStyle.Opaque:
+                        using (Brush whiteBrush = new SolidBrush(Color.White))
+                            g.FillRectangle(whiteBrush, part.Rect.ToRectangle());
+                        break;
+                    default:
+                        Console.WriteLine("Unsupported button style: " + part.Style.ToString());
+                        break;
+                }
+
+                int textHeight = 0;
+
+                // draw the text in this button
+                if (part.ShowName)
+                {
+                    using (Brush blackBrush = new SolidBrush(Color.Black))
+                    using (System.Drawing.Font buttonFont = MacFont.GetFont("Arial", part.TextSize, (FontStyle)((int)part.TextStyle & 0x07)))
+                    using (System.Drawing.Font iconFont = MacFont.GetFont("Arial", 10, (FontStyle)((int)part.TextStyle & 0x07)))
+                    {
+                        var font = (part.IconID != 0 ? iconFont : buttonFont);
+
+                        // measure the width of the string to calculate center/right alignment
+                        var textSize = g.MeasureString(part.Name, font);
+                        float textX = 0;
+                        float textY = (part.Rect.Height >> 1) - textSize.Height / 2;
+
+                        if (part.TextAlign == HyperCard.TextAlign.Center) textX += (part.Rect.Width >> 1) - textSize.Width / 2;
+                        else if (part.TextAlign == HyperCard.TextAlign.Right) textX += part.Rect.Width - textSize.Width;
+
+                        if (part.IconID != 0) textY += 18;
+                        textHeight = (int)textSize.Height;
+
+                        if (part.IconID != 0)
+                        {
+                            using (Brush whiteBrush = new SolidBrush(Color.White))
+                                g.FillRectangle(whiteBrush, new Rectangle((int)textX + 2, (int)textY + 1, (int)textSize.Width, (int)textSize.Height));
+                        }
+                        g.DrawString(part.Name, font, blackBrush, textX, textY);
+                    }
+                }
+
+                // draw the icon in this button
+                if (part.IconID != 0)
+                {
+                    // icons use 255, 255, 254 as their transparency key
+                    ImageAttributes attr = new ImageAttributes();
+                    attr.SetColorKey(Color.FromArgb(255, 255, 254), Color.FromArgb(255, 255, 254));
+
+                    // try to get the resource - returns a sane default
+                    var icon = (stack.IconResources.ContainsKey(part.IconID) ? stack.IconResources[part.IconID].Bitmap : Icon.PngFromID(part.IconID));
+
+                    // calculate the correct position and then draw it
+                    Point p = new Point(((part.Rect.Width - icon.Width) >> 1), ((part.Rect.Height - icon.Height) >> 1) - textHeight / 2);
+                    g.DrawImage(icon, new Rectangle(p, icon.Size), 0, 0, icon.Width, icon.Height, GraphicsUnit.Pixel, attr);
+                }
+
+                part.Dirty = false;
             }
 
-            if (part.IconID != 0)
-            {
-                // icons use 255, 255, 254 as their transparency key
-                ImageAttributes attr = new ImageAttributes();
-                attr.SetColorKey(Color.FromArgb(255, 255, 254), Color.FromArgb(255, 255, 254));
+            if (part.Highlight) InvertColors(cardBitmap, new Point(part.Rect.Left, part.Rect.Top), cachedParts[part]);
+            else cardBitmap.DrawImage(cachedParts[part], new Point(part.Rect.Left, part.Rect.Top));
+        }
 
-                // try to get the resource - returns a sane default
-                var icon = (stack.IconResources.ContainsKey(part.IconID) ? stack.IconResources[part.IconID].Bitmap : Icon.PngFromID(part.IconID));
+        private void InvertColors(Graphics g, Point location, Bitmap bitmap)
+        {
+            float[][] colorMatrixElements = { 
+                new float[] {-1,  0,  0,  0,  0},        // red scaling factor of 2
+                new float[] { 0, -1,  0,  0,  0},        // green scaling factor of 1
+                new float[] { 0,  0, -1,  0,  0},        // blue scaling factor of 1
+                new float[] { 1,  1,  1,  1,  0},        // alpha scaling factor of 1
+                new float[] { 0,  0,  0,  0,  1}};    // three translations of 0.2
 
-                // calculate the correct position and then draw it
-                // TODO:  Need to account for text spacing once text rendering is enabled
-                Point p = new Point(part.Rect.Left + ((part.Rect.Width - icon.Width) >> 1), part.Rect.Top + ((part.Rect.Height - icon.Height) >> 1) - textHeight / 2);
-                g.DrawImage(icon, new Rectangle(p, icon.Size), 0, 0, icon.Width, icon.Height, GraphicsUnit.Pixel, attr);
-            }
+            ColorMatrix colorMatrix = new ColorMatrix(colorMatrixElements);
+
+            ImageAttributes imageAttributes = new ImageAttributes();
+            imageAttributes.SetColorMatrix(
+               colorMatrix,
+               ColorMatrixFlag.Default,
+               ColorAdjustType.Bitmap);
+
+            g.DrawImage(bitmap, new Rectangle(location.X, location.Y, bitmap.Width, bitmap.Height), 0, 0, bitmap.Width, bitmap.Height, GraphicsUnit.Pixel, imageAttributes);
         }
     }
 }

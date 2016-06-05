@@ -371,6 +371,16 @@ namespace Player.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] ChicagoFLF {
+            get {
+                object obj = ResourceManager.GetObject("ChicagoFLF", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap Clicked_Close_Box {

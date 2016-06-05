@@ -92,28 +92,46 @@ namespace Player
             if (((byte)part.Flags & 0x80) == 0x80) return;
             if (string.IsNullOrWhiteSpace(part.Contents)) return;
 
-            string fontFamily = (part.Name.StartsWith("Home")) ? "Times New Roman" : "Arial";
+            string fontFamily = "Arial";
 
             using (Brush blackBrush = new SolidBrush(Color.Black))
-            //using (System.Drawing.Font buttonFont = new Font("Chicago", part.TextSize - 1, (FontStyle)((int)part.TextStyle & 0x07), GraphicsUnit.Pixel))
             using (System.Drawing.Font fieldFont = MacFont.GetFont(fontFamily, part.TextSize, (FontStyle)((int)part.TextStyle & 0x07)))
             {
-                // measure the width of the string to calculate center/right alignment
-                var textSize = g.MeasureString(part.Contents, fieldFont);
-                float textX = part.Rect.Left;// +(part.Rect.Width >> 1);
-                float textY = part.Rect.Top + (part.Rect.Height >> 1) - textSize.Height / 2;
-
-                if (part.TextAlign == HyperCard.TextAlign.Center) textX += (part.Rect.Width >> 1) - textSize.Width / 2;
-                else if (part.TextAlign == HyperCard.TextAlign.Right) textX += part.Rect.Width - textSize.Width;
-
-                g.DrawString(part.Contents, fieldFont, blackBrush, textX, textY);
+                if (part.Lines != null)
+                {
+                    for (int i = 0; i < part.Lines.Length; i++)
+                    {
+                        if (string.IsNullOrWhiteSpace(part.Lines[i])) continue;
+                        RenderLine(blackBrush, fieldFont, part, part.Lines[i], part.Rect.Top + part.TextHeight * i, g);
+                    }
+                }
+                else
+                {
+                    RenderLine(blackBrush, fieldFont, part, part.Contents, part.Rect.Top, g);
+                }
             }
+        }
+
+        private void RenderLine(Brush fontBrush, System.Drawing.Font font, HyperCard.Part part, string s, int y, Graphics g)
+        {
+            // measure the width of the string to calculate center/right alignment
+            var textSize = g.MeasureString(s, font);
+            float textX = part.Rect.Left;
+            float textY = y;
+
+            if (part.TextAlign == HyperCard.TextAlign.Center) textX += (part.Rect.Width >> 1) - textSize.Width / 2;
+            else if (part.TextAlign == HyperCard.TextAlign.Right) textX += part.Rect.Width - textSize.Width;
+
+            g.DrawString(s, font, fontBrush, textX, textY);
         }
 
         private Dictionary<HyperCard.Part, Bitmap> cachedParts = new Dictionary<HyperCard.Part, Bitmap>();
 
         private void RenderButton(HyperCard.Part part, Graphics cardBitmap)
         {
+            // check if this part is not visible
+            if (((byte)part.Flags & 0x80) == 0x80) return;
+
             if (!cachedParts.ContainsKey(part) || part.Dirty)
             {
                 // make sure to clean up the old bitmap
@@ -130,21 +148,11 @@ namespace Player
 
                 if (part.Highlight && part.IconID == 0)
                 {
-                    if (part.ShowName || part.Style != HyperCard.PartStyle.Transparent)
-                    {
-                        using (Brush whiteBrush = new SolidBrush(Color.White))
-                            g.FillRectangle(whiteBrush, part.Rect.ToRectangle());
-                    }
-                    else
-                    {
-                        cardBitmap.Flush();
-                        g.DrawImage(this.Image, new Rectangle(0, 0, part.Rect.Width, part.Rect.Height), new Rectangle(part.Rect.Left, part.Rect.Top, part.Rect.Width, part.Rect.Height), GraphicsUnit.Pixel);
-                    }
+                    cardBitmap.Flush();
+                    g.DrawImage(this.Image, new Rectangle(0, 0, part.Rect.Width, part.Rect.Height), new Rectangle(part.Rect.Left, part.Rect.Top, part.Rect.Width, part.Rect.Height), GraphicsUnit.Pixel);
                 }
 
-                // check if this part is not visible
-                if (((byte)part.Flags & 0x80) == 0x80) return;
-
+                // draw the border around this buton
                 switch (part.Style)
                 {
                     case HyperCard.PartStyle.Transparent: break;
@@ -226,12 +234,19 @@ namespace Player
             ColorMatrix colorMatrix = new ColorMatrix(colorMatrixElements);
 
             ImageAttributes imageAttributes = new ImageAttributes();
-            imageAttributes.SetColorMatrix(
-               colorMatrix,
-               ColorMatrixFlag.Default,
-               ColorAdjustType.Bitmap);
+            imageAttributes.SetColorMatrix(colorMatrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
 
             g.DrawImage(bitmap, new Rectangle(location.X, location.Y, bitmap.Width, bitmap.Height), 0, 0, bitmap.Width, bitmap.Height, GraphicsUnit.Pixel, imageAttributes);
+        }
+
+        protected override void OnMouseDown(MouseEventArgs e)
+        {
+            base.OnMouseDown(e);
+        }
+
+        protected override void OnMouseUp(MouseEventArgs e)
+        {
+            base.OnMouseUp(e);
         }
     }
 }

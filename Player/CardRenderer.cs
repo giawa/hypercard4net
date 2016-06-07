@@ -322,7 +322,7 @@ namespace Player
 
             for (int i = background.Parts.Count - 1; i >= 0; i--)
             {
-                if (Contains(card.Parts[i], p)) return card.Parts[i];
+                if (Contains(background.Parts[i], p)) return background.Parts[i];
             }
 
             return null;

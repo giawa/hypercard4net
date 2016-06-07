@@ -16,7 +16,7 @@ namespace Player
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Window(new HyperCard.StackReader("Background Art")));
+            Application.Run(new Window(new HyperCard.Stack("Home")));
         }
     }
 }

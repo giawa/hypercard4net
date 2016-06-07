@@ -16,14 +16,14 @@ namespace Player
                      ControlStyles.UserPaint, true);
         }
 
-        private HyperCard.StackReader stack;
+        private HyperCard.Stack stack;
         private HyperCard.Card card;
         private HyperCard.Background background;
 
         private HyperCard.Woba backgroundBitmap;
         private HyperCard.Woba cardBitmap;
 
-        public void SetCard(HyperCard.StackReader stack, HyperCard.Card card)
+        public void SetCard(HyperCard.Stack stack, HyperCard.Card card)
         {
             this.stack = stack;
             this.card = card;
@@ -52,8 +52,6 @@ namespace Player
 
         protected override void OnPaint(PaintEventArgs pe)
         {
-            base.OnPaint(pe);
-
             if (this.Image == null || this.Image.Width != Width || this.Image.Height != Height)
                 this.Image = new Bitmap(Width, Height);
 
@@ -83,7 +81,7 @@ namespace Player
                 else RenderField(part, g);
             }
 
-            g.Flush();
+            base.OnPaint(pe);
         }
 
         private void RenderField(HyperCard.Part part, Graphics g)
@@ -223,12 +221,13 @@ namespace Player
 
         private void InvertColors(Graphics g, Point location, Bitmap bitmap)
         {
+            // Note:  This is pretty slow - would it be faster to LockBits and do this manually?
             float[][] colorMatrixElements = { 
-                new float[] {-1,  0,  0,  0,  0},        // red scaling factor of 2
-                new float[] { 0, -1,  0,  0,  0},        // green scaling factor of 1
-                new float[] { 0,  0, -1,  0,  0},        // blue scaling factor of 1
+                new float[] {-1,  0,  0,  0,  0},        // red scaling factor of -1
+                new float[] { 0, -1,  0,  0,  0},        // green scaling factor of -1
+                new float[] { 0,  0, -1,  0,  0},        // blue scaling factor of -1
                 new float[] { 1,  1,  1,  1,  0},        // alpha scaling factor of 1
-                new float[] { 0,  0,  0,  0,  1}};    // three translations of 0.2
+                new float[] { 0,  0,  0,  0,  1}};
 
             ColorMatrix colorMatrix = new ColorMatrix(colorMatrixElements);
 
@@ -238,14 +237,100 @@ namespace Player
             g.DrawImage(bitmap, new Rectangle(location.X, location.Y, bitmap.Width, bitmap.Height), 0, 0, bitmap.Width, bitmap.Height, GraphicsUnit.Pixel, imageAttributes);
         }
 
+        private HyperCard.Part selectedPart = null;
+        private HyperCard.Part clickedPart = null;
+        private bool mouseDown = false;
+
+        protected override void OnMouseMove(MouseEventArgs e)
+        {
+            base.OnMouseMove(e);
+
+            HyperCard.Part part = SelectedPart(e.Location);
+            bool invalidate = false;
+
+            if (selectedPart != part)
+            {
+                // OnMouseLeave
+                if (selectedPart != null)
+                {
+                    if (mouseDown && selectedPart.AutoHighlight)
+                    {
+                        selectedPart.Highlight = false;
+                        invalidate = true;
+                    }
+                }
+
+                // OnMouseEnter
+                if (part != null)
+                {
+                    
+                }
+
+                // Rehighlight a previously clicked part
+                if (clickedPart == part)
+                {
+                    if (mouseDown && part.AutoHighlight)
+                    {
+                        part.Highlight = true;
+                        invalidate = true;
+                    }
+                }
+            }
+
+            if (invalidate) Refresh();
+            selectedPart = part;
+        }
+
         protected override void OnMouseDown(MouseEventArgs e)
         {
             base.OnMouseDown(e);
+
+            if (selectedPart == null) return;
+
+            if (selectedPart.Type == HyperCard.PartType.Button && selectedPart.AutoHighlight)
+            {
+                clickedPart = selectedPart;
+                selectedPart.Highlight = true;
+                Refresh();
+            }
+
+            mouseDown = true;
         }
 
         protected override void OnMouseUp(MouseEventArgs e)
         {
             base.OnMouseUp(e);
+
+            if (selectedPart == null) return;
+
+            if (selectedPart.Type == HyperCard.PartType.Button && selectedPart.AutoHighlight)
+            {
+                selectedPart.Highlight = false;
+                Refresh();
+            }
+
+            clickedPart = null;
+            mouseDown = false;
+        }
+
+        private HyperCard.Part SelectedPart(Point p)
+        {
+            for (int i = card.Parts.Count - 1; i >= 0; i--)
+            {
+                if (Contains(card.Parts[i], p)) return card.Parts[i];
+            }
+
+            for (int i = background.Parts.Count - 1; i >= 0; i--)
+            {
+                if (Contains(card.Parts[i], p)) return card.Parts[i];
+            }
+
+            return null;
+        }
+
+        private bool Contains(HyperCard.Part part, Point p)
+        {
+            return part.Rect.Left <= p.X && part.Rect.Right >= p.X && part.Rect.Top <= p.Y && part.Rect.Bottom >= p.Y;
         }
     }
 }

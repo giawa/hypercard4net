@@ -15,7 +15,7 @@ namespace HyperCard
 
             for (int i = 0; i < 10; i++)
             {
-                StackReader reader = new StackReader("Background Art");
+                Stack reader = new Stack("Background Art");
                 Console.WriteLine(reader.ToString());
             }
 

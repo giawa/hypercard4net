@@ -17,28 +17,38 @@ namespace Player
             {
                 if (file.Name.StartsWith("Home"))
                 {
-                    OpenStack(new HyperCard.StackReader(file.FullName));
+                    OpenStack(new HyperCard.Stack(file.FullName));
                     return;
                 }
             }
         }
 
-        public Window(HyperCard.StackReader stack)
+        public Window(HyperCard.Stack stack)
         {
             InitializeComponent();
 
             OpenStack(stack);
+
+            BuildMenu();
         }
 
-        private void OpenStack(HyperCard.StackReader stack)
+        private void OpenStack(HyperCard.Stack stack)
         {
-            //this.Height = stack.Height + 24 + SystemInformation.Border3DSize.Width;
-            //this.Width = stack.Width + SystemInformation.Border3DSize.Height;
             this.ClientSize = new System.Drawing.Size(stack.Width, stack.Height + 24);
 
             this.Text = "HyperCard .NET : " + stack.Name;
 
-            this.cardRenderer1.SetCard(stack, stack.Cards[0]);
+            this.cardRenderer1.SetCard(stack, stack.Cards[7]);
+        }
+
+        public HyperCard.UserLevel UserLevel = 0;
+
+        private void BuildMenu()
+        {
+            //this.menuStrip1.Items.Clear();
+
+            //this.menuStrip1.Items.Add(Player.Menu.BuildFileMenu(this));
+            //this.menuStrip1.Items.Add(Player.Menu.BuildToolsMenu(this, this.menuStrip1));
         }
     }
 }

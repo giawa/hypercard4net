@@ -24,6 +24,15 @@ namespace HyperCard
         CantModify = 32768
     }
 
+    public enum UserLevel : short
+    {
+        Browsing = 1,
+        Typing = 2,
+        Painting = 3,
+        Authoring = 4,
+        Scripting = 5
+    }
+
     public class IconResource
     {
         public short ID { get; private set; }
@@ -40,7 +49,7 @@ namespace HyperCard
         }
     }
 
-    public class StackReader
+    public class Stack
     {
         public List<Woba> Bitmaps = new List<Woba>();
 
@@ -50,7 +59,7 @@ namespace HyperCard
 
         public HyperCardFormat Format { get; set; }
 
-        public short UserLevel { get; set; }
+        public UserLevel UserLevel { get; set; }
 
         public StackFlags StackFlags { get; set; }
 
@@ -109,7 +118,7 @@ namespace HyperCard
             }
         }
 
-        public StackReader(string filename)
+        public Stack(string filename)
         {
             if (!File.Exists(filename)) return;
 
@@ -155,7 +164,7 @@ namespace HyperCard
                         firstCardId = reader.ReadInt32(); // ID number of the first CARD block
                         reader.ReadBytes(16);   // listId, freeCount, freeSize, printId
                         password = reader.ReadInt32(); // password hash for the Protect Stack command; not the same as the ask password hash
-                        UserLevel = reader.ReadInt16(); // maximum userLevel allowed by the stack
+                        UserLevel = (UserLevel)reader.ReadInt16(); // maximum userLevel allowed by the stack
                         reader.ReadBytes(2);    // something
                         StackFlags = (StackFlags)reader.ReadInt16();
                         reader.ReadBytes(18);   // something

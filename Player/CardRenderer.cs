@@ -267,7 +267,7 @@ namespace Player
                 }
 
                 // Rehighlight a previously clicked part
-                if (clickedPart == part)
+                if (clickedPart == part && part != null)
                 {
                     if (mouseDown && part.AutoHighlight)
                     {
@@ -301,6 +301,9 @@ namespace Player
         {
             base.OnMouseUp(e);
 
+            clickedPart = null;
+            mouseDown = false;
+
             if (selectedPart == null) return;
 
             if (selectedPart.Type == HyperCard.PartType.Button && selectedPart.AutoHighlight)
@@ -308,9 +311,6 @@ namespace Player
                 selectedPart.Highlight = false;
                 Refresh();
             }
-
-            clickedPart = null;
-            mouseDown = false;
         }
 
         private HyperCard.Part SelectedPart(Point p)

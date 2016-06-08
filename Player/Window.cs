@@ -32,13 +32,17 @@ namespace Player
             BuildMenu();
         }
 
+        private HyperCard.Stack stack;
+
         private void OpenStack(HyperCard.Stack stack)
         {
+            this.stack = stack;
+
             this.ClientSize = new System.Drawing.Size(stack.Width, stack.Height + 24);
 
             this.Text = "HyperCard .NET : " + stack.Name;
 
-            this.cardRenderer1.SetCard(stack, stack.Cards[7]);
+            this.cardRenderer1.SetCard(stack, stack.GetCardFromID(stack.List.Pages[0].PageEntries[0]));
         }
 
         public HyperCard.UserLevel UserLevel = 0;
@@ -49,6 +53,84 @@ namespace Player
 
             //this.menuStrip1.Items.Add(Player.Menu.BuildFileMenu(this));
             //this.menuStrip1.Items.Add(Player.Menu.BuildToolsMenu(this, this.menuStrip1));
+        }
+
+        private int pageIndex = 0;
+        private int entryIndex = 0;
+
+        public void NextCard()
+        {
+            entryIndex++;
+
+            if (stack.Pages[pageIndex].PageEntries.Count == entryIndex)
+            {
+                pageIndex++;
+
+                if (stack.Pages.Count == pageIndex)
+                {
+                    pageIndex = 0;
+                }
+
+                entryIndex = 0;
+            }
+
+            this.cardRenderer1.SetCard(stack, stack.GetCardFromID(stack.List.Pages[pageIndex].PageEntries[entryIndex]));
+        }
+
+        public void PreviousCard()
+        {
+            entryIndex--;
+
+            if (entryIndex < 0)
+            {
+                pageIndex--;
+
+                if (pageIndex < 0)
+                {
+                    pageIndex = stack.Pages.Count - 1;
+                }
+
+                entryIndex = stack.Pages[pageIndex].PageEntries.Count - 1;
+            }
+
+            this.cardRenderer1.SetCard(stack, stack.GetCardFromID(stack.List.Pages[pageIndex].PageEntries[entryIndex]));
+        }
+
+        /// <summary>
+        /// Intercept the arrow keys buttons
+        /// </summary>
+        /// <param name="keyData"></param>
+        /// <returns></returns>
+        protected override bool IsInputKey(Keys keyData)
+        {
+            switch (keyData)
+            {
+                case Keys.Right:
+                case Keys.Left:
+                case Keys.Up:
+                case Keys.Down:
+                    return true;
+                case Keys.Shift | Keys.Right:
+                case Keys.Shift | Keys.Left:
+                case Keys.Shift | Keys.Up:
+                case Keys.Shift | Keys.Down:
+                    return true;
+            }
+            return base.IsInputKey(keyData);
+        }
+
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+
+            if (e.KeyCode == Keys.Left)
+            {
+                PreviousCard();
+            }
+            else if (e.KeyCode == Keys.Right)
+            {
+                NextCard();
+            }
         }
     }
 }

@@ -95,12 +95,14 @@ namespace Player
             using (Brush blackBrush = new SolidBrush(Color.Black))
             using (System.Drawing.Font fieldFont = MacFont.GetFont(fontFamily, part.TextSize, (FontStyle)((int)part.TextStyle & 0x07)))
             {
+                int y = 0;
+
                 if (part.Lines != null)
                 {
                     for (int i = 0; i < part.Lines.Length; i++)
                     {
                         if (string.IsNullOrWhiteSpace(part.Lines[i])) continue;
-                        RenderLine(blackBrush, fieldFont, part, part.Lines[i], part.Rect.Top + part.TextHeight * i, g);
+                        y += RenderLine(blackBrush, fieldFont, part, part.Lines[i], part.Rect.Top + part.TextHeight * y, g);
                     }
                 }
                 else
@@ -110,17 +112,48 @@ namespace Player
             }
         }
 
-        private void RenderLine(Brush fontBrush, System.Drawing.Font font, HyperCard.Part part, string s, int y, Graphics g)
+        private int RenderLine(Brush fontBrush, System.Drawing.Font font, HyperCard.Part part, string s, int y, Graphics g)
         {
-            // measure the width of the string to calculate center/right alignment
-            var textSize = g.MeasureString(s, font);
-            float textX = part.Rect.Left;
-            float textY = y;
+            int lines = 0, i = 0;
+            int margin = part.WideMargins ? 5 : 1;
+            int lastSpace = -1;
 
-            if (part.TextAlign == HyperCard.TextAlign.Center) textX += (part.Rect.Width >> 1) - textSize.Width / 2;
-            else if (part.TextAlign == HyperCard.TextAlign.Right) textX += part.Rect.Width - textSize.Width;
+            string remaining = s;
 
-            g.DrawString(s, font, fontBrush, textX, textY);
+            while (remaining.Length > 0)
+            {
+                System.Drawing.SizeF textSize;
+
+                for (i = 0; i < remaining.Length; i++)
+                {
+                    if (remaining[i] == ' ') lastSpace = i;
+
+                    textSize = g.MeasureString(remaining.Substring(0, i), font);
+
+                    if (textSize.Width + 2 * margin > part.Rect.Width)
+                    {
+                        i = (lastSpace == -1 ? i - 1 : lastSpace + 1);
+                        lastSpace = -1;
+                        break;
+                    }
+                }
+
+                textSize = g.MeasureString(remaining.Substring(0, i), font);
+
+                float textX = part.Rect.Left + margin;
+                float textY = y + margin;
+
+                if (part.TextAlign == HyperCard.TextAlign.Center) textX += (part.Rect.Width >> 1) - textSize.Width / 2;
+                else if (part.TextAlign == HyperCard.TextAlign.Right) textX += part.Rect.Width - textSize.Width;
+
+                g.DrawString(remaining.Substring(0, i), font, fontBrush, textX, textY + part.TextHeight * lines);
+                lines++;
+
+                if (i == remaining.Length) break;
+                else remaining = remaining.Substring(i);
+            }
+
+            return lines;
         }
 
         private Dictionary<HyperCard.Part, Bitmap> cachedParts = new Dictionary<HyperCard.Part, Bitmap>();
@@ -162,6 +195,13 @@ namespace Player
                         using (Brush whiteBrush = new SolidBrush(Color.White))
                             g.FillRectangle(whiteBrush, new Rectangle(0, 0, part.Rect.Width - 1, part.Rect.Height - 1));
                         break;
+                    case HyperCard.PartStyle.CheckBox:
+                        using (Pen blackPen = new Pen(Color.Black))
+                        {
+                            g.DrawRectangle(blackPen, new Rectangle(0, (part.Rect.Height >> 1) - 6, 12, 12));
+                            if (part.Highlight) g.DrawRectangle(blackPen, new Rectangle(1, (part.Rect.Height >> 1) - 5, 10, 10));
+                        }
+                        break;
                     default:
                         Console.WriteLine("Unsupported button style: " + part.Style.ToString());
                         break;
@@ -182,7 +222,8 @@ namespace Player
                         float textX = 0;
                         float textY = (part.Rect.Height >> 1) - textSize.Height / 2;
 
-                        if (part.TextAlign == HyperCard.TextAlign.Center) textX += (part.Rect.Width >> 1) - textSize.Width / 2;
+                        if (part.Style == HyperCard.PartStyle.CheckBox) textX += 16;
+                        else if (part.TextAlign == HyperCard.TextAlign.Center) textX += (part.Rect.Width >> 1) - textSize.Width / 2;
                         else if (part.TextAlign == HyperCard.TextAlign.Right) textX += part.Rect.Width - textSize.Width;
 
                         if (part.IconID != 0) textY += 18;
@@ -215,7 +256,7 @@ namespace Player
                 part.Dirty = false;
             }
 
-            if (part.Highlight) InvertColors(cardBitmap, new Point(part.Rect.Left, part.Rect.Top), cachedParts[part]);
+            if (part.Highlight && part.Style != HyperCard.PartStyle.CheckBox) InvertColors(cardBitmap, new Point(part.Rect.Left, part.Rect.Top), cachedParts[part]);
             else cardBitmap.DrawImage(cachedParts[part], new Point(part.Rect.Left, part.Rect.Top));
         }
 
@@ -331,6 +372,38 @@ namespace Player
         private bool Contains(HyperCard.Part part, Point p)
         {
             return part.Rect.Left <= p.X && part.Rect.Right >= p.X && part.Rect.Top <= p.Y && part.Rect.Bottom >= p.Y;
+        }
+
+        protected override bool IsInputKey(Keys keyData)
+        {
+            switch (keyData)
+            {
+                case Keys.Right:
+                case Keys.Left:
+                case Keys.Up:
+                case Keys.Down:
+                    return true;
+                case Keys.Shift | Keys.Right:
+                case Keys.Shift | Keys.Left:
+                case Keys.Shift | Keys.Up:
+                case Keys.Shift | Keys.Down:
+                    return true;
+            }
+            return base.IsInputKey(keyData);
+        }
+
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+
+            if (e.KeyCode == Keys.Left)
+            {
+                ((Window)Parent).PreviousCard();
+            }
+            else if (e.KeyCode == Keys.Right)
+            {
+                ((Window)Parent).NextCard();
+            }
         }
     }
 }

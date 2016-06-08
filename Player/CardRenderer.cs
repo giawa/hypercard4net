@@ -56,6 +56,7 @@ namespace Player
                 this.Image = new Bitmap(Width, Height);
 
             Graphics g = Graphics.FromImage(this.Image);
+            g.Clear(Color.White);
             g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit;
 
             if (stack == null || card == null) return;

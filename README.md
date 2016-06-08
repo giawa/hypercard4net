@@ -4,9 +4,11 @@
 Bits and pieces of a HyperCard parser/player in C#
 
 ## Features
-* Stack, card, background, part (button/field) parsing
+* Stack, master reference, list, page, card, background, bitmap, button and field chunk processing
 * WOBA processing and export to .PNG (and any other .NET supported Bitmap file format)
-* Basic card rendering, including bitmaps, some icons, button/field visualization
+* Macintosh ICON processing and conversion to .PNG (and any other .NET supported Bitmap file format) with a color key for transparency
+* Basic card rendering, including bitmaps, some icons, button and field support
+* Navigation via next card/previous card (using left and right arrow keys)
 
 ## Screenshots
 ![Home vs. Home](https://giawa.github.com/hypercard/home_vs_home.png)

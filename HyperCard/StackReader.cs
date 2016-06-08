@@ -138,6 +138,7 @@ namespace HyperCard
                 while (reader.Position < reader.Length)
                 {
                     int blockSize = reader.ReadInt32();
+                    if ((blockSize % 32) != 0) blockSize += 32 - blockSize % 32;
                     string blockType = new string(reader.ReadChars(4));
                     int blockID = reader.ReadInt32();
 
@@ -223,10 +224,8 @@ namespace HyperCard
                         reader.Position = startBlock + 0x0600;
                         Script = new string(reader.ReadChars((int)(nextBlock - reader.Position))).Replace((char)65533, '∞');
                     }
-                    else
-                    {
-                        reader.Position = nextBlock;
-                    }
+
+                    reader.Position = nextBlock;
                 }
             }
         }

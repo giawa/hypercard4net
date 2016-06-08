@@ -245,13 +245,15 @@ namespace HyperCard
                 offsets[i] = reader.ReadInt32();
             }
 
-            // now scan through the file to each of the chunks, cachine the name/offset
+            // now scan through the file to each of the chunks, caching the name/offset
             for (int i = 0; i < offsets.Length; i++)
             {
-                if (offsets[i] == 0) continue;
+                if ((offsets[i] & 0xffffff00) == 0) continue;
+                if (((offsets[i] & 0xffffff00) >> 3) + 8 >= reader.Length) continue;
 
                 reader.Position = ((offsets[i] & 0xffffff00) >> 3) + 4;
                 string blockType = new string(reader.ReadChars(4));
+                if (!IsValidChunk(blockType)) continue;
 
                 if (!chunks.ContainsKey(blockType)) chunks.Add(blockType, (int)(reader.Position - 8));
             }
@@ -268,8 +270,43 @@ namespace HyperCard
                 List = new List(reader, blockSize, blockID);
             }
 
+            // read the page block if it exists with the MAST (this occurs in Graph Maker, for example)
+            // since there can be multiple of these we should really process all of them...
+            if (chunks.ContainsKey("PAGE") && chunks["PAGE"] < nextBlock)
+            {
+                reader.Position = chunks["PAGE"];
+
+                int blockSize = reader.ReadInt32();
+                string blockType = new string(reader.ReadChars(4));
+                int blockID = reader.ReadInt32();
+
+                Pages.Add(new Page(reader, blockSize, blockID, List));
+            }
+
             // finally, return to the correct location to continue parsing
             reader.Position = nextBlock;
+        }
+
+        private bool IsValidChunk(string chunk)
+        {
+            switch (chunk)
+            {
+                case "STAK":
+                case "MAST":
+                case "LIST":
+                case "PAGE":
+                case "BKGD":
+                case "CARD":
+                case "BMAP":
+                case "FREE":
+                case "STBL":
+                case "FTBL":
+                case "PRNT":
+                case "PRST":
+                case "PRFT":
+                case "TAIL": return true;
+                default: return false;
+            }
         }
 
         public Card GetCardFromID(int id)

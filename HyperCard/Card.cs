@@ -272,7 +272,7 @@ namespace HyperCard
             set
             {
                 highlight = value;
-                if (Style == PartStyle.CheckBox) Dirty = true;
+                if (Style == PartStyle.CheckBox || Style == PartStyle.Transparent) Dirty = true;
             }
         }
 

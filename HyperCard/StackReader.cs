@@ -97,6 +97,10 @@ namespace HyperCard
 
         public Dictionary<short, IconResource> IconResources = new Dictionary<short, IconResource>();
 
+        public List List { get; private set; }
+
+        public List<Page> Pages { get; private set; }
+
         private void ProcessResources(string filename)
         {
             FileInfo info = new FileInfo(filename);
@@ -125,6 +129,8 @@ namespace HyperCard
             FileInfo info = new FileInfo(filename);
             this.Name = info.Name;
 
+            this.Pages = new List<Page>();
+
             ProcessResources(filename);
 
             using (BigEndianBinaryReader reader = new BigEndianBinaryReader(filename))
@@ -138,9 +144,13 @@ namespace HyperCard
                     long startBlock = reader.Position - 12;
                     long nextBlock = startBlock + blockSize;
 
-                    Console.WriteLine("Found {0} block", blockType);
+                    Console.WriteLine("Found {0} block at 0x{1:x}", blockType, startBlock);
 
-                    if (blockType == "BMAP")
+                    if (blockType == "MAST")
+                    {
+                        ProcessMAST(reader, blockSize, blockID);
+                    }
+                    else if (blockType == "BMAP")
                     {
                         Bitmaps.Add(new Woba(reader, blockSize, blockID));
                     }
@@ -151,6 +161,15 @@ namespace HyperCard
                     else if (blockType == "BKGD")
                     {
                         Backgrounds.Add(new Background(reader, blockSize, blockID));
+                    }
+                    // LIST gets processed as part of the MAST block
+                    /*else if (blockType == "LIST")
+                    {
+                        List = new List(reader, blockSize, blockID);
+                    }*/
+                    else if (blockType == "PAGE")
+                    {
+                        Pages.Add(new Page(reader, blockSize, blockID, List));
                     }
                     else if (blockType == "STAK")
                     {
@@ -210,6 +229,155 @@ namespace HyperCard
                     }
                 }
             }
+        }
+
+        private void ProcessMAST(BigEndianBinaryReader reader, int mastChunkSize, int mastID)
+        {
+            long nextBlock = reader.Position + mastChunkSize - 12;
+            Dictionary<string, int> chunks = new Dictionary<string, int>();
+
+            reader.ReadBytes(20);   // filler, something
+            int[] offsets = new int[(mastChunkSize - 32) / 4];
+
+            // find all of the chunk offsets (which are aligned to 32 byte boundaries)
+            for (int i = 0; i < offsets.Length; i++)
+            {
+                offsets[i] = reader.ReadInt32();
+            }
+
+            // now scan through the file to each of the chunks, cachine the name/offset
+            for (int i = 0; i < offsets.Length; i++)
+            {
+                if (offsets[i] == 0) continue;
+
+                reader.Position = ((offsets[i] & 0xffffff00) >> 3) + 4;
+                string blockType = new string(reader.ReadChars(4));
+
+                if (!chunks.ContainsKey(blockType)) chunks.Add(blockType, (int)(reader.Position - 8));
+            }
+
+            // force the processing of the LIST block, because we need that information for PAGE blocks (which can be out of order)
+            if (chunks.ContainsKey("LIST"))
+            {
+                reader.Position = chunks["LIST"];
+
+                int blockSize = reader.ReadInt32();
+                string blockType = new string(reader.ReadChars(4));
+                int blockID = reader.ReadInt32();
+
+                List = new List(reader, blockSize, blockID);
+            }
+
+            // finally, return to the correct location to continue parsing
+            reader.Position = nextBlock;
+        }
+
+        public Card GetCardFromID(int id)
+        {
+            foreach (var card in Cards)
+                if (card.CardID == id) return card;
+
+            return null;
+        }
+
+        public Page GetPageFromID(int id)
+        {
+            foreach (var page in Pages)
+                if (page.PageID == id) return page;
+
+            return null;
+        }
+    }
+
+    public class List
+    {
+        public int PageCount { get; set; }
+
+        public int PageEntryTotal { get; set; }
+
+        public int ListID { get; set; }
+
+        public short PageEntrySize { get; set; }
+
+        public Dictionary<int, short> PageEntryCount { get; private set; }
+
+        public Page[] Pages { get; private set; }
+
+        private int[] pageIDs;
+
+        public List(BigEndianBinaryReader reader, int listChunkSize, int listID)
+        {
+            long nextBlock = reader.Position + listChunkSize - 12;
+
+            PageEntryCount = new Dictionary<int, short>();
+
+            this.ListID = listID;
+
+            reader.ReadInt32(); // filler
+            this.PageCount = reader.ReadInt32();
+            reader.ReadInt32();
+            this.PageEntryTotal = reader.ReadInt32();
+
+            this.PageEntrySize = reader.ReadInt16();
+            reader.ReadBytes(10);
+
+            this.PageEntryTotal = reader.ReadInt32();
+            reader.ReadInt32();
+
+            pageIDs = new int[PageCount];
+            Pages = new Page[PageCount];
+
+            for (int i = 0; i < PageCount; i++)
+            {
+                pageIDs[i] = reader.ReadInt32();
+                short pageEntryCount = reader.ReadInt16();
+
+                PageEntryCount.Add(pageIDs[i], pageEntryCount);
+            }
+
+            reader.Position = nextBlock;
+        }
+
+        public void AddPage(Page page)
+        {
+            for (int i = 0; i < pageIDs.Length; i++)
+                if (pageIDs[i] == page.PageID)
+                    Pages[i] = page;
+        }
+    }
+
+    public class Page
+    {
+        public int ListID { get; set; }
+
+        public int PageID { get; set; }
+
+        public List<int> PageEntries { get; set; }
+
+        public Page(BigEndianBinaryReader reader, int pageChunkSize, int pageID, List list)
+        {
+            long nextBlock = reader.Position + pageChunkSize - 12;
+
+            PageEntries = new List<int>();
+
+            this.PageID = pageID;
+
+            reader.ReadInt32(); // filler
+            ListID = reader.ReadInt32();
+            reader.ReadInt32(); // something
+
+            short pageEntryCount = list.PageEntryCount[pageID];
+
+            for (int i = 0; i < pageEntryCount; i++)
+            {
+                PageEntries.Add(reader.ReadInt32());
+                reader.ReadBytes(list.PageEntrySize - 4);
+            }
+
+            // add this page to the list
+            list.AddPage(this);
+
+            reader.Position = nextBlock;
         }
     }
 }

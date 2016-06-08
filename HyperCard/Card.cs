@@ -264,7 +264,17 @@ namespace HyperCard
 
         public bool AutoSelect { get; set; }
 
-        public bool Highlight { get; set; }
+        private bool highlight = false;
+
+        public bool Highlight
+        {
+            get { return highlight; }
+            set
+            {
+                highlight = value;
+                if (Style == PartStyle.CheckBox) Dirty = true;
+            }
+        }
 
         public bool ShowLines { get; set; }
 
@@ -332,7 +342,6 @@ namespace HyperCard
 
                 if (partContentType == 0)
                 {
-                    //string temp = new string(reader.ReadChars(partContentSize - 1));
                     string temp = Utilities.FromMacRoman(reader.ReadBytes(partContentSize - 1), partContentSize - 1);
                     foreach (var part in parts)
                     {

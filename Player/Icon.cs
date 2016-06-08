@@ -12,15 +12,30 @@ namespace Player
                 // These are all of the icons on a page of the Home stack for now - I'll eventually have to lookup all 201 icons
                 //case 2980: return Properties.Resources.Address;
                 case 3430: return Properties.Resources.Address_Card_A;
+
+                case 10181: return Properties.Resources.New_Sort;
+                case 9104: return Properties.Resources.Stack_Info_Rt_Tri;
+                case 27969: return Properties.Resources.New_Home_prefs;
+                case 3358: return Properties.Resources.Clicked_Close_Box;
+                case 3071: return Properties.Resources.Close_Box;
+                case 27774: return Properties.Resources.Icon_Substitute;
+                case 28654: return Properties.Resources.Search;
+
+                case 23718: return Properties.Resources.Sm_Left_Triangle;
+                case 23717: return Properties.Resources.Small_Rt_Triangle;
+                case 8349: return Properties.Resources.Prev__Double;
+                case 8350: return Properties.Resources.Next_Double;
                 case 28810: return Properties.Resources.LEFT_tri;
                 case 28811: return Properties.Resources.right_tri;
-                //case 17214: return Properties.Resources.Readymade_Buttons;
-                //case 21711: return Properties.Resources.Readymade_Fields;
-                //case 16735: return Properties.Resources.Beanie_Copter;
-                //case 29589: return Properties.Resources.Background_Art;
-                //case 24753: return Properties.Resources.Stack_Templates;
-                //case 31885: return Properties.Resources.HT_Reference;
-                //case 28023: return Properties.Resources.Large_Home_Base;
+                case 6043: return Properties.Resources.PREV;
+
+                case 6044: return Properties.Resources.NXT;
+                case 8980: return Properties.Resources.Blk_Help ;
+                case 8964: return Properties.Resources.Blk_Prev_Arrow;
+                case 8979: return Properties.Resources.Blk_Next_Arrow;
+                case 8347: return Properties.Resources.Lt_Arrow_Prev;
+                case 8348: return Properties.Resources.Lt_Arrow_Next;
+                case 23613: return Properties.Resources.TINY_Phone;
 
                 case 17937: return Properties.Resources.Wrong_Number;
                 case 17890: return Properties.Resources.Big_Tone;

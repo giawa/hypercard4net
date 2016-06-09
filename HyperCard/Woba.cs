@@ -111,7 +111,7 @@ namespace HyperCard
             // calculate the size of the 1bpp bitmap
             int width = BitmapRight - BitmapLeft;
             rowlength = (((width * 1) / 8) + ((((width * 1) % 8) != 0) ? 1 : 0));   // assume a depth of 1
-            byte[] pixelData = new byte[rowlength * (BitmapBottom - BitmapTop)];
+            byte[] pixelData = new byte[rowlength * (BitmapBottom - BitmapTop + 1)];
 
             // xornstr is a critical section of code (~20%+) which can be sped up if rowwidth is modulo 4 or modulo 8
             // by taking advantage of int or long calculations (processing 4 or 8 bytes at a time) instead of byte by byte
@@ -130,6 +130,7 @@ namespace HyperCard
                     /* zeros followed by data */
                     nd = opcode >> 4;
                     nz = opcode & 15;
+                    if (nd + i > data.Length) break;
                     /* std::cout<<"nd: "<<nd<<endl<<"nz: "<<nz<<endl; */
                     if (nd != 0)
                     {
@@ -155,6 +156,8 @@ namespace HyperCard
                 {
                     /* opcode & 1F * 8 bytes of data */
                     nd = (opcode & 0x1F) * 8;
+                    if (nd + i > data.Length) break;
+
                     /* std::cout<<"nd: "<<nd<<endl; */
                     if (nd != 0)
                     {
@@ -199,12 +202,12 @@ namespace HyperCard
                     {
                         case 0x80: /* uncompressed data */
                             x = 0;
+                            if (i + rowwidth > data.Length) break;
                             while (repeat != 0)
                             {
                                 //p.maskmemcopyin(data[i], bx8, y, rowwidth);
                                 for (int k = 0; k < rowwidth; k++)
                                 {
-                                    byte d = data[i + k];
                                     pixelData[bx + y * rowlength + k] = data[i + k];
                                 }
                                 y++;
@@ -343,7 +346,7 @@ namespace HyperCard
                                 if (dy != 0)
                                 {
                                     //p.maskmemcopyout(buffer2, bx8, y - dy, rowwidth);
-                                    memcopyout(pixelData, buffer2, bx8, y - dy, rowwidth);
+                                    memcopyout(pixelData, buffer2, bx8, Math.Max(0, y - dy), rowwidth);
                                     xornstr(buffer1, buffer2, rowwidth);
                                 }
                                 //p.maskmemcopyin(buffer1, bx8, y, rowwidth);
@@ -379,7 +382,7 @@ namespace HyperCard
             // convert our int array into a bitmap that can be used by GDI+ or even saved to a file
             Bitmap bitmap = new Bitmap(BitmapRight - BitmapLeft, BitmapBottom - BitmapTop);
             var bits = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), System.Drawing.Imaging.ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format32bppRgb);
-            Marshal.Copy(expandedData, 0, bits.Scan0, expandedData.Length);
+            Marshal.Copy(expandedData, 0, bits.Scan0, (BitmapBottom - BitmapTop) * (BitmapRight - BitmapLeft));
             bitmap.UnlockBits(bits);
 
             return bitmap;

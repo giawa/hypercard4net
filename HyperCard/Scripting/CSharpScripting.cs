@@ -14,7 +14,7 @@ namespace HyperCard.Scripting
         /// </summary>
         /// <param name="script">The script to compile (1 script per part/card/background/etc).</param>
         /// <returns>The fully compiled type (if successful) or null if not successful.</returns>
-        public Type CompileScript(string script)
+        public static Module CompileScript(string script)
         {
             try
             {
@@ -33,8 +33,7 @@ namespace HyperCard.Scripting
                 if (results.Errors.Count == 0)
                 {
                     Module module = results.CompiledAssembly.GetModules()[0];
-                    Type[] moduleTypes = module.GetTypes();
-                    if (moduleTypes.Length > 0) return moduleTypes[0];
+                    return module;
                 }
             }
             catch (Exception e)
@@ -44,6 +43,18 @@ namespace HyperCard.Scripting
             }
 
             return null;
+        }
+
+        public static bool InvokeCompiledMethod(Type type, string methodName, object sender)
+        {
+            if (type == null) return false;
+
+            MethodInfo mouseDown = type.GetMethod(methodName);
+            if (mouseDown == null) return false;
+
+            mouseDown.Invoke(null, new object[] { sender });
+
+            return true;
         }
     }
 }

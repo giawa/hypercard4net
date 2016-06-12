@@ -33,6 +33,11 @@ namespace HyperCard
         Scripting = 5
     }
 
+    public interface IStackRenderer
+    {
+        void Invalidate();
+    }
+
     public class IconResource
     {
         public short ID { get; private set; }
@@ -51,6 +56,8 @@ namespace HyperCard
 
     public class Stack
     {
+        public IStackRenderer Renderer { get; set; }
+
         public List<Woba> Bitmaps = new List<Woba>();
 
         public List<Card> Cards = new List<Card>();
@@ -316,6 +323,14 @@ namespace HyperCard
         {
             foreach (var card in Cards)
                 if (card.ID == id) return card;
+
+            return null;
+        }
+
+        public Card GetCardFromName(string name)
+        {
+            foreach (var card in Cards)
+                if (card.Name == name) return card;
 
             return null;
         }

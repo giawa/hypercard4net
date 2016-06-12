@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace Player
 {
-    public class CardRenderer : PictureBox
+    public class CardRenderer : PictureBox, HyperCard.IStackRenderer
     {
         public CardRenderer()
         {
@@ -25,6 +25,11 @@ namespace Player
 
         public void SetCard(HyperCard.Stack stack, HyperCard.Card card)
         {
+            stack.Renderer = this;
+            if (this.stack == stack && this.card == card) return;
+
+            cachedParts.Clear();
+
             this.stack = stack;
             this.card = card;
 
@@ -60,6 +65,7 @@ namespace Player
             g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit;
 
             if (stack == null || card == null) return;
+            if (card != stack.CurrentCard) SetCard(stack, stack.CurrentCard);
 
             if (backgroundBitmap != null && backgroundBitmap.Image != null) g.DrawImage(backgroundBitmap.Image, new Point(0, 0));
             if (cardBitmap != null && cardBitmap.Image != null)
@@ -103,17 +109,17 @@ namespace Player
                     for (int i = 0; i < part.Lines.Length; i++)
                     {
                         if (string.IsNullOrWhiteSpace(part.Lines[i])) continue;
-                        y += RenderLine(blackBrush, fieldFont, part, part.Lines[i], part.Rect.Top + part.TextHeight * y, g);
+                        y += RenderTextLine(blackBrush, fieldFont, part, part.Lines[i], part.Rect.Top + part.TextHeight * y, g);
                     }
                 }
                 else
                 {
-                    RenderLine(blackBrush, fieldFont, part, part.Contents, part.Rect.Top, g);
+                    RenderTextLine(blackBrush, fieldFont, part, part.Contents, part.Rect.Top, g);
                 }
             }
         }
 
-        private int RenderLine(Brush fontBrush, System.Drawing.Font font, HyperCard.Part part, string s, int y, Graphics g)
+        private int RenderTextLine(Brush fontBrush, System.Drawing.Font font, HyperCard.Part part, string s, int y, Graphics g)
         {
             int lines = 0, i = 0;
             int margin = part.WideMargins ? 5 : 1;

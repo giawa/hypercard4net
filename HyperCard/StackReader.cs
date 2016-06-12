@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Reflection;
 
 namespace HyperCard
 {
@@ -108,7 +109,25 @@ namespace HyperCard
 
         public List<Page> Pages { get; private set; }
 
-        public Card CurrentCard { get; set; }
+        private Card currentCard;
+        public Card CurrentCard
+        {
+            get { return currentCard; }
+            set
+            {
+                if (value != currentCard)
+                {
+                    if (currentCard != null)
+                    {
+                        currentCard.InvokeCompiledMethod("CloseCard");
+                    }
+
+                    currentCard = value;
+                    currentCard.InvokeCompiledMethod("OpenCard");
+                    if (Renderer != null) Renderer.Invalidate();
+                }
+            }
+        }
 
         private void ProcessResources(string filename)
         {
@@ -129,6 +148,53 @@ namespace HyperCard
                     if (!IconResources.ContainsKey(id)) IconResources.Add(id, new IconResource(id, name, file.FullName));
                 }
             }
+        }
+
+        private Module stackModule;
+        public Type CompiledScript { get; set; }
+
+        private void CompileScript(string filename)
+        {
+            FileInfo info = new FileInfo(filename);
+            string path = info.Directory.FullName + "\\" + info.Name + ".cs";
+
+            if (!File.Exists(path)) return;
+
+            stackModule = Scripting.CSharpScripting.CompileScript(File.ReadAllText(path));
+
+            if (stackModule == null) return;
+
+            // we'll be looking up types by name, so store them in a Dictionary for easy lookup
+            Dictionary<string, Type> types = new Dictionary<string, Type>();
+            foreach (var type in stackModule.GetTypes())
+            {
+                types.Add(type.Name, type);
+            }
+
+            // now hook up all of the types
+            CompiledScript = FindType(types, "Stack");
+
+            foreach (var background in Backgrounds)
+            {
+                background.CompiledScript = FindType(types, string.Format("Background{0}", background.ID));
+
+                foreach (var part in background.Parts)
+                    part.CompiledScript = FindType(types, string.Format("Background{0}{1}", part.Type, part.ID));
+            }
+
+            foreach (var card in Cards)
+            {
+                card.CompiledScript = FindType(types, string.Format("Card{0}", card.ID));
+
+                foreach (var part in card.Parts)
+                    part.CompiledScript = FindType(types, string.Format("Card{0}{1}", part.Type, part.ID));
+            }
+        }
+
+        private Type FindType(Dictionary<string, Type> types, string name)
+        {
+            if (types.ContainsKey(name)) return types[name];
+            else return null;
         }
 
         public Stack(string filename)
@@ -238,6 +304,7 @@ namespace HyperCard
                 }
             }
 
+            CompileScript(filename);
             CurrentCard = GetCardFromID(List.Pages[0].PageEntries[0]);
         }
 
@@ -341,6 +408,14 @@ namespace HyperCard
                 if (page.PageID == id) return page;
 
             return null;
+        }
+
+        internal void InvokeCompiledMethod(string methodName)
+        {
+            bool handled = Scripting.CSharpScripting.InvokeCompiledMethod(CompiledScript, methodName, this);
+
+            Console.WriteLine("Stack caught message " + methodName);
+            //if (!handled) EscalateMessage(methodName);
         }
     }
 

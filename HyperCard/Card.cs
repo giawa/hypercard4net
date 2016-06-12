@@ -75,6 +75,10 @@ namespace HyperCard
         int ID { get; }
 
         string Name { get; }
+
+        Type CompiledScript { get; set; }
+
+        void InvokeCompiledMethod(string methodName);
     }
 
     public class Card : IPartContainer
@@ -96,6 +100,8 @@ namespace HyperCard
         public string Script { get; set; }
 
         public Stack Stack { get; private set; }
+
+        public Type CompiledScript { get; set; }
 
         public Card(Stack stack, BigEndianBinaryReader reader, int cardChunkSize, int cardID)
         {
@@ -135,6 +141,44 @@ namespace HyperCard
             Script = reader.ReadString();
             reader.Position = nextBlock;
         }
+
+        public Part GetPartFromID(int id)
+        {
+            foreach (var part in Parts)
+                if (part.ID == id) return part;
+            return null;
+        }
+
+        public Part GetPartFromName(string name)
+        {
+            foreach (var part in Parts)
+                if (part.Name == name) return part;
+            return null;
+        }
+
+        public Background GetBackground()
+        {
+            foreach (var background in Stack.Backgrounds)
+                if (background.ID == BackgroundID)
+                    return background;
+
+            return null;
+        }
+
+        public void InvokeCompiledMethod(string methodName)
+        {
+            bool handled = Scripting.CSharpScripting.InvokeCompiledMethod(CompiledScript, methodName, this);
+
+            if (!handled) EscalateMessage(methodName);
+        }
+
+        private void EscalateMessage(string methodName)
+        {
+            var background = GetBackground();
+
+            if (background != null) background.InvokeCompiledMethod(methodName);
+            else Stack.InvokeCompiledMethod(methodName);
+        }
     }
 
     public class Background : IPartContainer
@@ -156,6 +200,8 @@ namespace HyperCard
         public string Script { get; set; }
 
         public Stack Stack { get; private set; }
+
+        public Type CompiledScript { get; set; }
 
         public Background(Stack stack, BigEndianBinaryReader reader, int cardChunkSize, int cardID)
         {
@@ -194,6 +240,32 @@ namespace HyperCard
             Script = reader.ReadString();
             reader.Position = nextBlock;
         }
+
+        public Part GetPartFromID(int id)
+        {
+            foreach (var part in Parts)
+                if (part.ID == id) return part;
+            return null;
+        }
+
+        public Part GetPartFromName(string name)
+        {
+            foreach (var part in Parts)
+                if (part.Name == name) return part;
+            return null;
+        }
+
+        public void InvokeCompiledMethod(string methodName)
+        {
+            bool handled = Scripting.CSharpScripting.InvokeCompiledMethod(CompiledScript, methodName, this);
+
+            if (!handled) EscalateMessage(methodName);
+        }
+
+        private void EscalateMessage(string methodName)
+        {
+            Stack.InvokeCompiledMethod(methodName);
+        }
     }
 
     public struct Rect
@@ -225,7 +297,7 @@ namespace HyperCard
     {
         public bool Dirty { get; set; }
 
-        public short PartID { get; private set; }
+        public short ID { get; private set; }
 
         public PartType Type { get; private set; }
 
@@ -318,7 +390,7 @@ namespace HyperCard
             long nextBlock = reader.Position + size - 2;
 
             Parent = parent;
-            PartID = reader.ReadInt16();
+            ID = reader.ReadInt16();
             Type = (PartType)reader.ReadByte();
             Flags = (PartFlags)reader.ReadByte();
             Rect = new Rect(reader);
@@ -364,7 +436,7 @@ namespace HyperCard
                     string temp = Utilities.FromMacRoman(reader.ReadBytes(partContentSize - 1), partContentSize - 1);
                     foreach (var part in parts)
                     {
-                        if (part.PartID == partContentID)
+                        if (part.ID == partContentID)
                         {
                             part.Contents = temp;
                             if (temp.Contains("\r")) part.Lines = temp.Split(new char[] { '\r' });
@@ -378,16 +450,18 @@ namespace HyperCard
         }
 
         #region Messages
-        private Type compiledType;
+        public Type CompiledScript { get; set; }
 
-        private void InvokeCompiledMethod(string methodName)
+        internal void InvokeCompiledMethod(string methodName)
         {
-            if (compiledType == null) return;
+            bool handled = Scripting.CSharpScripting.InvokeCompiledMethod(CompiledScript, methodName, this);
 
-            MethodInfo mouseDown = compiledType.GetMethod(methodName);
-            if (mouseDown == null) return;
+            //if (!handled) EscalateMessage(methodName);
+        }
 
-            mouseDown.Invoke(null, new object[] { this });
+        private void EscalateMessage(string methodName)
+        {
+            if (Parent != null) Parent.InvokeCompiledMethod(methodName);
         }
 
         public void OnMouseDown()

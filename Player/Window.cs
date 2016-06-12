@@ -56,65 +56,14 @@ namespace Player
             //this.menuStrip1.Items.Add(Player.Menu.BuildToolsMenu(this, this.menuStrip1));
         }
 
-        private int pageIndex = 0;
-        private int entryIndex = 0;
-
-        private void FindEntry()
-        {
-            for (pageIndex = 0; pageIndex < stack.Pages.Count; pageIndex++)
-            {
-                for (entryIndex = 0; entryIndex < stack.Pages[pageIndex].PageEntries.Count; entryIndex++)
-                {
-                    if (stack.CurrentCard == stack.GetCardFromID(stack.List.Pages[pageIndex].PageEntries[entryIndex]))
-                        return;
-                }
-            }
-
-            // we never found the card we were looking for, so return the first card in the stack
-            pageIndex = 0;
-            entryIndex = 0;
-        }
-
         public void NextCard()
         {
-            FindEntry();
-            entryIndex++;
-
-            if (stack.Pages[pageIndex].PageEntries.Count == entryIndex)
-            {
-                pageIndex++;
-
-                if (stack.Pages.Count == pageIndex)
-                {
-                    pageIndex = 0;
-                }
-
-                entryIndex = 0;
-            }
-
-            stack.CurrentCard = stack.GetCardFromID(stack.List.Pages[pageIndex].PageEntries[entryIndex]);
-            cardRenderer1.Invalidate();
+            stack.NextCard();
         }
 
         public void PreviousCard()
         {
-            FindEntry();
-            entryIndex--;
-
-            if (entryIndex < 0)
-            {
-                pageIndex--;
-
-                if (pageIndex < 0)
-                {
-                    pageIndex = stack.Pages.Count - 1;
-                }
-
-                entryIndex = stack.Pages[pageIndex].PageEntries.Count - 1;
-            }
-
-            stack.CurrentCard = stack.GetCardFromID(stack.List.Pages[pageIndex].PageEntries[entryIndex]);
-            cardRenderer1.Invalidate();
+            stack.PreviousCard();
         }
 
         /// <summary>

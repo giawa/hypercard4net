@@ -123,6 +123,7 @@ namespace HyperCard
                     }
 
                     currentCard = value;
+                    FindEntry();
                     currentCard.InvokeCompiledMethod("OpenCard");
                     if (Renderer != null) Renderer.Invalidate();
                 }
@@ -408,6 +409,62 @@ namespace HyperCard
                 if (page.PageID == id) return page;
 
             return null;
+        }
+
+        private int pageIndex, entryIndex;
+
+        private void FindEntry()
+        {
+            for (pageIndex = 0; pageIndex < Pages.Count; pageIndex++)
+            {
+                for (entryIndex = 0; entryIndex < Pages[pageIndex].PageEntries.Count; entryIndex++)
+                {
+                    if (CurrentCard == GetCardFromID(List.Pages[pageIndex].PageEntries[entryIndex]))
+                        return;
+                }
+            }
+
+            // we never found the card we were looking for, so return the first card in the stack
+            pageIndex = 0;
+            entryIndex = 0;
+        }
+
+        public void NextCard()
+        {
+            entryIndex++;
+
+            if (Pages[pageIndex].PageEntries.Count == entryIndex)
+            {
+                pageIndex++;
+
+                if (Pages.Count == pageIndex)
+                {
+                    pageIndex = 0;
+                }
+
+                entryIndex = 0;
+            }
+
+            CurrentCard = GetCardFromID(List.Pages[pageIndex].PageEntries[entryIndex]);
+        }
+
+        public void PreviousCard()
+        {
+            entryIndex--;
+
+            if (entryIndex < 0)
+            {
+                pageIndex--;
+
+                if (pageIndex < 0)
+                {
+                    pageIndex = Pages.Count - 1;
+                }
+
+                entryIndex = Pages[pageIndex].PageEntries.Count - 1;
+            }
+
+            CurrentCard = GetCardFromID(List.Pages[pageIndex].PageEntries[entryIndex]);
         }
 
         internal void InvokeCompiledMethod(string methodName)

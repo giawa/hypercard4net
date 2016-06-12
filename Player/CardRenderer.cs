@@ -33,7 +33,7 @@ namespace Player
 
             foreach (var bkgnd in stack.Backgrounds)
             {
-                if (bkgnd.BackgroundID == card.BackgroundID)
+                if (bkgnd.ID == card.BackgroundID)
                 {
                     background = bkgnd;
 
@@ -300,12 +300,14 @@ namespace Player
                         selectedPart.Highlight = false;
                         invalidate = true;
                     }
+
+                    selectedPart.OnMouseLeave();
                 }
 
                 // OnMouseEnter
                 if (part != null)
                 {
-                    
+                    part.OnMouseEnter();
                 }
 
                 // Rehighlight a previously clicked part
@@ -328,6 +330,7 @@ namespace Player
             base.OnMouseDown(e);
 
             if (selectedPart == null) return;
+            selectedPart.OnMouseDown();
 
             if (selectedPart.Type == HyperCard.PartType.Button && selectedPart.AutoHighlight)
             {
@@ -347,6 +350,7 @@ namespace Player
             mouseDown = false;
 
             if (selectedPart == null) return;
+            selectedPart.OnMouseUp();
 
             if (selectedPart.Type == HyperCard.PartType.Button && selectedPart.AutoHighlight)
             {

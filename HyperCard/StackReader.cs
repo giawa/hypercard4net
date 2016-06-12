@@ -101,6 +101,8 @@ namespace HyperCard
 
         public List<Page> Pages { get; private set; }
 
+        public Card CurrentCard { get; set; }
+
         private void ProcessResources(string filename)
         {
             FileInfo info = new FileInfo(filename);
@@ -157,11 +159,11 @@ namespace HyperCard
                     }
                     else if (blockType == "CARD")
                     {
-                        Cards.Add(new Card(reader, blockSize, blockID));
+                        Cards.Add(new Card(this, reader, blockSize, blockID));
                     }
                     else if (blockType == "BKGD")
                     {
-                        Backgrounds.Add(new Background(reader, blockSize, blockID));
+                        Backgrounds.Add(new Background(this, reader, blockSize, blockID));
                     }
                     // LIST gets processed as part of the MAST block
                     /*else if (blockType == "LIST")
@@ -228,6 +230,8 @@ namespace HyperCard
                     reader.Position = nextBlock;
                 }
             }
+
+            CurrentCard = GetCardFromID(List.Pages[0].PageEntries[0]);
         }
 
         private void ProcessMAST(BigEndianBinaryReader reader, int mastChunkSize, int mastID)
@@ -311,7 +315,7 @@ namespace HyperCard
         public Card GetCardFromID(int id)
         {
             foreach (var card in Cards)
-                if (card.CardID == id) return card;
+                if (card.ID == id) return card;
 
             return null;
         }

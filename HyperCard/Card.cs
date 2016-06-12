@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 
 namespace HyperCard
@@ -67,9 +68,18 @@ namespace HyperCard
         Group = 128
     }
 
-    public class Card
+    public interface IPartContainer
     {
-        public int CardID { get; private set; }
+        Stack Stack { get; }
+
+        int ID { get; }
+
+        string Name { get; }
+    }
+
+    public class Card : IPartContainer
+    {
+        public int ID { get; private set; }
 
         public int BitmapID { get; private set; }
 
@@ -85,14 +95,17 @@ namespace HyperCard
 
         public string Script { get; set; }
 
-        public Card(BigEndianBinaryReader reader, int cardChunkSize, int cardID)
+        public Stack Stack { get; private set; }
+
+        public Card(Stack stack, BigEndianBinaryReader reader, int cardChunkSize, int cardID)
         {
+            Stack = stack;
             Parts = new List<Part>();
 
             long nextBlock = reader.Position + cardChunkSize - 12;
 
             //CardID = reader.ReadInt32();
-            CardID = cardID;
+            ID = cardID;
             reader.ReadInt32(); // filler
             BitmapID = reader.ReadInt32();
             Flags = (CardFlags)reader.ReadInt16();
@@ -109,7 +122,7 @@ namespace HyperCard
 
             for (int i = 0; i < partCount; i++)
             {
-                Parts.Add(new Part(reader));
+                Parts.Add(new Part(this, reader));
             }
 
             for (int i = 0; i < partContentCount; i++)
@@ -124,9 +137,9 @@ namespace HyperCard
         }
     }
 
-    public class Background
+    public class Background : IPartContainer
     {
-        public int BackgroundID { get; private set; }
+        public int ID { get; private set; }
 
         public int BitmapID { get; private set; }
 
@@ -142,13 +155,16 @@ namespace HyperCard
 
         public string Script { get; set; }
 
-        public Background(BigEndianBinaryReader reader, int cardChunkSize, int cardID)
+        public Stack Stack { get; private set; }
+
+        public Background(Stack stack, BigEndianBinaryReader reader, int cardChunkSize, int cardID)
         {
+            Stack = stack;
             Parts = new List<Part>();
 
             long nextBlock = reader.Position + cardChunkSize - 12;
 
-            BackgroundID = cardID;
+            ID = cardID;
             reader.ReadInt32(); // filler
             BitmapID = reader.ReadInt32();
             Flags = (CardFlags)reader.ReadInt16();
@@ -165,7 +181,7 @@ namespace HyperCard
 
             for (int i = 0; i < partCount; i++)
             {
-                Parts.Add(new Part(reader));
+                Parts.Add(new Part(this, reader));
             }
 
             for (int i = 0; i < partContentCount; i++)
@@ -294,11 +310,14 @@ namespace HyperCard
 
         public bool Click { get; set; }
 
-        public Part(BigEndianBinaryReader reader)
+        public IPartContainer Parent { get; set; }
+
+        public Part(IPartContainer parent, BigEndianBinaryReader reader)
         {
             short size = reader.ReadInt16();
             long nextBlock = reader.Position + size - 2;
 
+            Parent = parent;
             PartID = reader.ReadInt16();
             Type = (PartType)reader.ReadByte();
             Flags = (PartFlags)reader.ReadByte();
@@ -357,5 +376,49 @@ namespace HyperCard
 
             if ((reader.Position % 2) != 0) reader.Position += (reader.Position % 2);
         }
+
+        #region Messages
+        private Type compiledType;
+
+        private void InvokeCompiledMethod(string methodName)
+        {
+            if (compiledType == null) return;
+
+            MethodInfo mouseDown = compiledType.GetMethod(methodName);
+            if (mouseDown == null) return;
+
+            mouseDown.Invoke(null, new object[] { this });
+        }
+
+        public void OnMouseDown()
+        {
+            InvokeCompiledMethod("OnMouseDown");
+        }
+
+        public void OnMouseStillDown()
+        {
+            InvokeCompiledMethod("OnMouseStillDown");
+        }
+
+        public void OnMouseUp()
+        {
+            InvokeCompiledMethod("OnMouseUp");
+        }
+
+        public void OnMouseEnter()
+        {
+            InvokeCompiledMethod("OnMouseEnter");
+        }
+
+        public void OnMouseWithin()
+        {
+            InvokeCompiledMethod("OnMouseWithin");
+        }
+
+        public void OnMouseLeave()
+        {
+            InvokeCompiledMethod("OnMouseLeave");
+        }
+        #endregion
     }
 }

@@ -42,7 +42,8 @@ namespace Player
 
             this.Text = "HyperCard .NET : " + stack.Name;
 
-            this.cardRenderer1.SetCard(stack, stack.GetCardFromID(stack.List.Pages[0].PageEntries[0]));
+            //this.cardRenderer1.SetCard(stack, stack.GetCardFromID(stack.List.Pages[0].PageEntries[0]));
+            this.cardRenderer1.SetCard(stack, stack.CurrentCard);
         }
 
         public HyperCard.UserLevel UserLevel = 0;

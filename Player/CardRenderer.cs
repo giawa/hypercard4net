@@ -367,12 +367,12 @@ namespace Player
 
         private HyperCard.Part SelectedPart(Point p)
         {
-            for (int i = card.Parts.Count - 1; i >= 0; i--)
+            for (int i = 0; i < card.Parts.Count; i++)
             {
                 if (Contains(card.Parts[i], p)) return card.Parts[i];
             }
 
-            for (int i = background.Parts.Count - 1; i >= 0; i--)
+            for (int i = 0; i < background.Parts.Count; i++)
             {
                 if (Contains(background.Parts[i], p)) return background.Parts[i];
             }

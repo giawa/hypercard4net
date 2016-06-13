@@ -95,21 +95,43 @@ namespace Player
         {
             // check if this part is not visible
             if (((byte)part.Flags & 0x80) == 0x80) return;
-            if (string.IsNullOrWhiteSpace(part.Contents)) return;
+
+            switch (part.Style)
+            {
+                case HyperCard.PartStyle.Opaque:
+                    using (Brush whiteBrush = new SolidBrush(Color.White))
+                        g.FillRectangle(whiteBrush, part.Rect.ToRectangle());
+                    break;
+                case HyperCard.PartStyle.Rectangle:
+                    using (Pen blackPen = new Pen(Color.Black))
+                        g.DrawRectangle(blackPen, part.Rect.ToRectangle());
+                    break;
+                case HyperCard.PartStyle.Shadow:
+                    using (Pen blackPen = new Pen(Color.Black))
+                        g.DrawRectangle(blackPen, new Rectangle(part.Rect.Left, part.Rect.Top, part.Rect.Width - 2, part.Rect.Height - 2));
+                    break;
+                case HyperCard.PartStyle.Scrolling:
+                    using (Pen blackPen = new Pen(Color.Black))
+                        g.DrawRectangle(blackPen, part.Rect.ToRectangle());
+                    break;
+            }
 
             string fontFamily = "Arial";
+
+            string[] lines = (stack.CurrentCard.BackgroundOverrides.ContainsKey(part.ID) ? stack.CurrentCard.BackgroundOverrides[part.ID].Split(new char[] { '\r' }) : part.Lines);
+            if (lines == null && string.IsNullOrWhiteSpace(part.Contents)) return;
 
             using (Brush blackBrush = new SolidBrush(Color.Black))
             using (System.Drawing.Font fieldFont = MacFont.GetFont(fontFamily, part.TextSize, (FontStyle)((int)part.TextStyle & 0x07)))
             {
-                int y = 0;
-
-                if (part.Lines != null)
+                if (lines != null)
                 {
-                    for (int i = 0; i < part.Lines.Length; i++)
+                    for (int i = 0, y = 0; i < lines.Length; i++)
                     {
-                        if (string.IsNullOrWhiteSpace(part.Lines[i])) continue;
-                        y += RenderTextLine(blackBrush, fieldFont, part, part.Lines[i], part.Rect.Top + part.TextHeight * y, g);
+                        if (string.IsNullOrWhiteSpace(lines[i])) continue;
+                        y += RenderTextLine(blackBrush, fieldFont, part, lines[i], part.Rect.Top + part.TextHeight * y, g);
+
+                        if (part.TextHeight * (y + 1) > part.Rect.Height) break;
                     }
                 }
                 else
@@ -170,6 +192,8 @@ namespace Player
             // check if this part is not visible
             if (((byte)part.Flags & 0x80) == 0x80) return;
 
+            bool highlight = (stack.CurrentCard.BackgroundOverrides.ContainsKey(part.ID) ? stack.CurrentCard.BackgroundOverrides[part.ID] == "1" : part.Highlight);
+
             if (!cachedParts.ContainsKey(part) || part.Dirty)
             {
                 // make sure to clean up the old bitmap
@@ -184,7 +208,7 @@ namespace Player
                 g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit;
                 cachedParts.Add(part, cachedPart);
 
-                if (part.Highlight && part.IconID == 0)
+                if (highlight && part.IconID == 0)
                 {
                     cardBitmap.Flush();
                     g.DrawImage(this.Image, new Rectangle(0, 0, part.Rect.Width, part.Rect.Height), new Rectangle(part.Rect.Left, part.Rect.Top, part.Rect.Width, part.Rect.Height), GraphicsUnit.Pixel);
@@ -206,7 +230,7 @@ namespace Player
                         using (Pen blackPen = new Pen(Color.Black))
                         {
                             g.DrawRectangle(blackPen, new Rectangle(0, (part.Rect.Height >> 1) - 6, 12, 12));
-                            if (part.Highlight) g.DrawRectangle(blackPen, new Rectangle(1, (part.Rect.Height >> 1) - 5, 10, 10));
+                            if (highlight) g.DrawRectangle(blackPen, new Rectangle(1, (part.Rect.Height >> 1) - 5, 10, 10));
                         }
                         break;
                     default:
@@ -263,7 +287,7 @@ namespace Player
                 part.Dirty = false;
             }
 
-            if (part.Highlight && part.Style != HyperCard.PartStyle.CheckBox) InvertColors(cardBitmap, new Point(part.Rect.Left, part.Rect.Top), cachedParts[part]);
+            if (highlight && part.Style != HyperCard.PartStyle.CheckBox) InvertColors(cardBitmap, new Point(part.Rect.Left, part.Rect.Top), cachedParts[part]);
             else cardBitmap.DrawImage(cachedParts[part], new Point(part.Rect.Left, part.Rect.Top));
         }
 

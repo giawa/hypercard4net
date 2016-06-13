@@ -45,14 +45,24 @@ namespace HyperCard.Scripting
             return null;
         }
 
+        /// <summary>
+        /// Tries to invoke a method with the required name.  Returns true
+        /// if the method was found and run successfully.  Returns false
+        /// if the message should be escalated thru the message passing stack.
+        /// </summary>
+        /// <param name="type">The class that contains the method to call.</param>
+        /// <param name="methodName">The name of the method to call.</param>
+        /// <param name="sender">The object that is calling this method.
+        /// This is a button for a button script, card for card script, etc.</param>
+        /// <returns>True if the method was run successfully, false if the message should be escalated.</returns>
         public static bool InvokeCompiledMethod(Type type, string methodName, object sender)
         {
             if (type == null) return false;
 
-            MethodInfo mouseDown = type.GetMethod(methodName);
-            if (mouseDown == null) return false;
+            MethodInfo method = type.GetMethod(methodName);
+            if (method == null) return false;
 
-            mouseDown.Invoke(null, new object[] { sender });
+            method.Invoke(null, new object[] { sender });
 
             return true;
         }

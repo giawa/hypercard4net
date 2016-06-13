@@ -391,13 +391,15 @@ namespace Player
 
         private HyperCard.Part SelectedPart(Point p)
         {
-            for (int i = 0; i < card.Parts.Count; i++)
+            for (int i = card.Parts.Count - 1; i >= 0; i--)
             {
+                if ((card.Parts[i].Flags & HyperCard.PartFlags.NotVisible) == HyperCard.PartFlags.NotVisible) continue;
                 if (Contains(card.Parts[i], p)) return card.Parts[i];
             }
 
-            for (int i = 0; i < background.Parts.Count; i++)
+            for (int i = background.Parts.Count - 1; i >= 0; i--)
             {
+                if ((background.Parts[i].Flags & HyperCard.PartFlags.NotVisible) == HyperCard.PartFlags.NotVisible) continue;
                 if (Contains(background.Parts[i], p)) return background.Parts[i];
             }
 

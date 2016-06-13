@@ -273,7 +273,7 @@ namespace HyperCard
         }
     }
 
-    public struct Rect
+    public class Rect
     {
         public short Top;
         public short Left;
@@ -365,7 +365,8 @@ namespace HyperCard
             set
             {
                 highlight = value;
-                if (Style == PartStyle.CheckBox || Style == PartStyle.Transparent) Dirty = true;
+                //if (Style == PartStyle.CheckBox || Style == PartStyle.Transparent) Dirty = true;
+                Dirty = true;
             }
         }
 
@@ -456,6 +457,16 @@ namespace HyperCard
             }
 
             if ((reader.Position % 2) != 0) reader.Position += (reader.Position % 2);
+        }
+
+        public bool Visible
+        {
+            get { return (Flags & PartFlags.NotVisible) == 0; }
+            set
+            {
+                Flags = (Flags & ~PartFlags.NotVisible);
+                if (!value) Flags |= PartFlags.NotVisible;
+            }
         }
 
         #region Messages

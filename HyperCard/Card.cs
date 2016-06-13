@@ -79,6 +79,8 @@ namespace HyperCard
         Type CompiledScript { get; set; }
 
         void InvokeCompiledMethod(string methodName);
+
+        Part GetPartFromID(int id);
     }
 
     public class Card : IPartContainer
@@ -103,10 +105,13 @@ namespace HyperCard
 
         public Type CompiledScript { get; set; }
 
+        public Dictionary<int, string> BackgroundOverrides { get; private set; }
+
         public Card(Stack stack, BigEndianBinaryReader reader, int cardChunkSize, int cardID)
         {
             Stack = stack;
             Parts = new List<Part>();
+            BackgroundOverrides = new Dictionary<int, string>();
 
             long nextBlock = reader.Position + cardChunkSize - 12;
 
@@ -133,7 +138,7 @@ namespace HyperCard
 
             for (int i = 0; i < partContentCount; i++)
             {
-                Part.ProcessPartContents(Parts, reader);
+                Part.ProcessPartContents(this, reader, BackgroundOverrides);
             }
 
             Name = reader.ReadString();
@@ -232,7 +237,7 @@ namespace HyperCard
 
             for (int i = 0; i < partContentCount; i++)
             {
-                Part.ProcessPartContents(Parts, reader);
+                Part.ProcessPartContents(this, reader, null);
             }
 
             Name = reader.ReadString();
@@ -422,7 +427,7 @@ namespace HyperCard
             return string.Format("{0} : {1}", Type, Name);
         }
 
-        public static void ProcessPartContents(List<Part> parts, BigEndianBinaryReader reader)
+        public static void ProcessPartContents(IPartContainer card, BigEndianBinaryReader reader, Dictionary<int, string> backgroundOverrides)
         {
             short partContentID = Math.Abs(reader.ReadInt16());
             short partContentSize = reader.ReadInt16();
@@ -434,13 +439,17 @@ namespace HyperCard
                 if (partContentType == 0)
                 {
                     string temp = Utilities.FromMacRoman(reader.ReadBytes(partContentSize - 1), partContentSize - 1);
-                    foreach (var part in parts)
+
+                    var part = card.GetPartFromID(partContentID);
+
+                    if (part != null)
                     {
-                        if (part.ID == partContentID)
-                        {
-                            part.Contents = temp;
-                            if (temp.Contains("\r")) part.Lines = temp.Split(new char[] { '\r' });
-                        }
+                        part.Contents = temp;
+                        if (temp.Contains("\r")) part.Lines = temp.Split(new char[] { '\r' });
+                    }
+                    else if (backgroundOverrides != null)
+                    {
+                        backgroundOverrides.Add(partContentID, temp);
                     }
                 }
                 else reader.Position += (partContentSize - 1);

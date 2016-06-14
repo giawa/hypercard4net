@@ -10,6 +10,9 @@ Bits and pieces of a HyperCard parser/player in C#
 * Basic card rendering, including bitmaps, some icons, button and field support
 * Navigation via next card/previous card (using left and right arrow keys)
 
+## Example Stacks
+This git project includes a few example stacks (in the Examples directory).  These stacks were taken from a HyperCard 2.4 release.  I am not the copyright holder of the example stacks, and they are provided for reference and test purposes only.  Since I am not bundling a version of HyperCard itself with these stacks I believe that I am distributing the stacks under fair use.
+
 ## Screenshots
 ![Home vs. Home](https://giawa.github.com/hypercard/home_vs_home.png)
 

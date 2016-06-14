@@ -50,10 +50,15 @@ namespace Player
 
         private void BuildMenu()
         {
-            //this.menuStrip1.Items.Clear();
+            this.menuStrip1.Items.Clear();
 
-            //this.menuStrip1.Items.Add(Player.Menu.BuildFileMenu(this));
-            //this.menuStrip1.Items.Add(Player.Menu.BuildToolsMenu(this, this.menuStrip1));
+            this.menuStrip1.Items.Add(Player.Menu.BuildFileMenu(this));
+            this.menuStrip1.Items.Add(Player.Menu.BuildEditMenu(this));
+            this.menuStrip1.Items.Add(Player.Menu.BuildGoMenu(this));
+            this.menuStrip1.Items.Add(Player.Menu.BuildToolsMenu(this, this.menuStrip1));
+            this.menuStrip1.Items.Add(Player.Menu.BuildObjectsMenu(this));
+            this.menuStrip1.Items.Add(Player.Menu.BuildFontMenu(this));
+            this.menuStrip1.Items.Add(Player.Menu.BuildStyleMenu(this));
         }
 
         public void NextCard()

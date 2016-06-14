@@ -46,7 +46,14 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Font.cs" />
+    <Compile Include="Forms\CardInfo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\CardInfo.Designer.cs">
+      <DependentUpon>CardInfo.cs</DependentUpon>
+    </Compile>
     <Compile Include="Icon.cs" />
+    <Compile Include="Menu.cs" />
     <Compile Include="Window.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -58,6 +65,9 @@
     <None Include="Fonts\ChicagoFLF.ttf" />
     <None Include="Fonts\Geneva.ttf" />
     <None Include="Icons\AddColor OFF.png" />
+    <EmbeddedResource Include="Forms\CardInfo.resx">
+      <DependentUpon>CardInfo.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Window.resx">
       <DependentUpon>Window.cs</DependentUpon>
     </EmbeddedResource>

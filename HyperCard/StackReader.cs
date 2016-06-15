@@ -36,6 +36,12 @@ namespace HyperCard
 
     public interface IStackRenderer
     {
+        HyperCard.Stack Stack { get; }
+
+        void SetStack(HyperCard.Stack stack);
+
+        void SetCard(HyperCard.Stack stack, HyperCard.Card card);
+
         void Invalidate();
     }
 

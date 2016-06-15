@@ -32,18 +32,9 @@ namespace Player
             BuildMenu();
         }
 
-        private HyperCard.Stack stack;
-
         private void OpenStack(HyperCard.Stack stack)
         {
-            this.stack = stack;
-
-            this.ClientSize = new System.Drawing.Size(stack.Width, stack.Height + 24);
-
-            this.Text = "HyperCard .NET : " + stack.Name;
-
-            //this.cardRenderer1.SetCard(stack, stack.GetCardFromID(stack.List.Pages[0].PageEntries[0]));
-            this.cardRenderer1.SetCard(stack, stack.CurrentCard);
+            this.cardRenderer1.SetStack(stack);
         }
 
         public HyperCard.UserLevel UserLevel = 0;
@@ -59,16 +50,6 @@ namespace Player
             this.menuStrip1.Items.Add(Player.Menu.BuildObjectsMenu(this));
             this.menuStrip1.Items.Add(Player.Menu.BuildFontMenu(this));
             this.menuStrip1.Items.Add(Player.Menu.BuildStyleMenu(this));
-        }
-
-        public void NextCard()
-        {
-            stack.NextCard();
-        }
-
-        public void PreviousCard()
-        {
-            stack.PreviousCard();
         }
 
         /// <summary>
@@ -100,11 +81,11 @@ namespace Player
 
             if (e.KeyCode == Keys.Left)
             {
-                PreviousCard();
+                cardRenderer1.Stack.PreviousCard();
             }
             else if (e.KeyCode == Keys.Right)
             {
-                NextCard();
+                cardRenderer1.Stack.NextCard();
             }
         }
     }

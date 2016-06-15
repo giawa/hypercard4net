@@ -23,6 +23,22 @@ namespace Player
         private HyperCard.Woba backgroundBitmap;
         private HyperCard.Woba cardBitmap;
 
+        public HyperCard.Stack Stack
+        {
+            get { return stack; }
+        }
+
+        public void SetStack(HyperCard.Stack stack)
+        {
+            if (this.Parent is Window)
+            {
+                this.Parent.ClientSize = new System.Drawing.Size(stack.Width, stack.Height + 24);
+                this.Parent.Text = "HyperCard .NET : " + stack.Name;
+            }
+
+            SetCard(stack, stack.CurrentCard);
+        }
+
         public void SetCard(HyperCard.Stack stack, HyperCard.Card card)
         {
             stack.Renderer = this;
@@ -435,11 +451,11 @@ namespace Player
 
             if (e.KeyCode == Keys.Left)
             {
-                ((Window)Parent).PreviousCard();
+                Stack.PreviousCard();
             }
             else if (e.KeyCode == Keys.Right)
             {
-                ((Window)Parent).NextCard();
+                Stack.NextCard();
             }
         }
     }

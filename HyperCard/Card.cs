@@ -157,7 +157,7 @@ namespace HyperCard
         public Part GetPartFromName(string name)
         {
             foreach (var part in Parts)
-                if (part.Name == name) return part;
+                if (part.Name.ToLower() == name.ToLower()) return part;
             return null;
         }
 
@@ -256,7 +256,7 @@ namespace HyperCard
         public Part GetPartFromName(string name)
         {
             foreach (var part in Parts)
-                if (part.Name == name) return part;
+                if (part.Name.ToLower() == name.ToLower()) return part;
             return null;
         }
 

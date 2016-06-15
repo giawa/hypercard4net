@@ -404,7 +404,7 @@ namespace HyperCard
         public Card GetCardFromName(string name)
         {
             foreach (var card in Cards)
-                if (card.Name == name) return card;
+                if (card.Name.ToLower() == name.ToLower()) return card;
 
             return null;
         }
@@ -413,6 +413,14 @@ namespace HyperCard
         {
             foreach (var page in Pages)
                 if (page.PageID == id) return page;
+
+            return null;
+        }
+
+        public Bitmap GetBitmapFromID(int id)
+        {
+            foreach (var bitmap in Bitmaps)
+                if (bitmap.BitmapID == id) return bitmap.Image;
 
             return null;
         }
@@ -433,6 +441,22 @@ namespace HyperCard
             // we never found the card we were looking for, so return the first card in the stack
             pageIndex = 0;
             entryIndex = 0;
+        }
+
+        public void FirstCard()
+        {
+            entryIndex = 0;
+            pageIndex = 0;
+
+            CurrentCard = GetCardFromID(List.Pages[pageIndex].PageEntries[entryIndex]);
+        }
+
+        public void LastCard()
+        {
+            pageIndex = Pages.Count - 1;
+            entryIndex = Pages[pageIndex].PageEntries.Count - 1;
+
+            CurrentCard = GetCardFromID(List.Pages[pageIndex].PageEntries[entryIndex]);
         }
 
         public void NextCard()

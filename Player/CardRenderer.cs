@@ -84,18 +84,19 @@ namespace Player
             if (card != stack.CurrentCard) SetCard(stack, stack.CurrentCard);
 
             if (backgroundBitmap != null && backgroundBitmap.Image != null) g.DrawImage(backgroundBitmap.Image, new Point(0, 0));
+
+            foreach (var part in background.Parts)
+            {
+                if (part.Type == HyperCard.PartType.Button) RenderButton(part, g);
+                else RenderField(part, g);
+            }
+
             if (cardBitmap != null && cardBitmap.Image != null)
             {
                 ImageAttributes attr = new ImageAttributes();
                 attr.SetColorKey(Color.White, Color.White);
 
                 g.DrawImage(cardBitmap.Image, this.ClientRectangle, 0, 0, cardBitmap.Image.Width, cardBitmap.Image.Height, GraphicsUnit.Pixel, attr);
-            }
-
-            foreach (var part in background.Parts)
-            {
-                if (part.Type == HyperCard.PartType.Button) RenderButton(part, g);
-                else RenderField(part, g);
             }
 
             foreach (var part in card.Parts)
@@ -185,11 +186,12 @@ namespace Player
 
                 textSize = g.MeasureString(remaining.Substring(0, i), font);
 
-                float textX = part.Rect.Left + margin;
+                float textX = part.Rect.Left;// +margin;
                 float textY = y + margin;
 
                 if (part.TextAlign == HyperCard.TextAlign.Center) textX += (part.Rect.Width >> 1) - textSize.Width / 2;
-                else if (part.TextAlign == HyperCard.TextAlign.Right) textX += part.Rect.Width - textSize.Width;
+                else if (part.TextAlign == HyperCard.TextAlign.Right) textX += part.Rect.Width - textSize.Width - margin;
+                else textX += margin;
 
                 g.DrawString(remaining.Substring(0, i), font, fontBrush, textX, textY + part.TextHeight * lines);
                 lines++;
@@ -235,6 +237,8 @@ namespace Player
                 {
                     case HyperCard.PartStyle.Transparent: break;
                     case HyperCard.PartStyle.Rectangle:
+                        using (Brush whiteBrush = new SolidBrush(Color.White))
+                            g.FillRectangle(whiteBrush, new Rectangle(0, 0, part.Rect.Width - 1, part.Rect.Height - 1));
                         using (Pen blackPen = new Pen(Color.Black))
                             g.DrawRectangle(blackPen, new Rectangle(0, 0, part.Rect.Width - 1, part.Rect.Height - 1));
                         break;

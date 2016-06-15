@@ -16,4 +16,4 @@ This git project includes a few example stacks (in the Examples directory).  The
 ## Screenshots
 ![Home vs. Home](https://giawa.github.com/hypercard/home_vs_home.png)
 
-![Graph Maker vs. Graph Maker](https://giawa.github.com/hypercard/graph_vs_graph.png)
+![Graph Maker vs. Graph Maker](https://giawa.github.com/hypercard/colored_graph_vs_graph.png)

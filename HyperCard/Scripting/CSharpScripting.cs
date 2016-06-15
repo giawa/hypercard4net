@@ -23,7 +23,7 @@ namespace HyperCard.Scripting
                 string uniqueName = Environment.TickCount + script.GetHashCode() + ".dll";
 
                 var csc = new CSharpCodeProvider();
-                var parameters = new CompilerParameters(new[] { "mscorlib.dll", "System.Core.dll", "HyperCard.dll" }, uniqueName, true);
+                var parameters = new CompilerParameters(new[] { "mscorlib.dll", "System.Core.dll", "System.Drawing.dll", "HyperCard.dll" }, uniqueName, true);
                 parameters.GenerateInMemory = true;
 
                 CompilerResults results = csc.CompileAssemblyFromSource(parameters, script);

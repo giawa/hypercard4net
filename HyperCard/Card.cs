@@ -280,9 +280,9 @@ namespace HyperCard
         public short Bottom;
         public short Right;
 
-        public short Width { get { return (short)(Right - Left); } }
+        public short Width { get { return (short)Math.Abs(Right - Left); } }
 
-        public short Height { get { return (short)(Bottom - Top); } }
+        public short Height { get { return (short)Math.Abs(Bottom - Top); } }
 
         public Rect(BigEndianBinaryReader reader)
         {

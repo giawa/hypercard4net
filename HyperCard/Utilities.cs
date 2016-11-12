@@ -56,7 +56,7 @@ namespace HyperCard
                 Marshal.Copy(expandedData, 0, bits.Scan0, expandedData.Length);
                 bitmap.UnlockBits(bits);
 
-                // create a bitmap with one pixel on each side to allow a flood fille
+                // create a bitmap with one pixel on each side to allow a flood fill
                 Bitmap fillBitmap = new Bitmap(side + 2, side + 2);
 
                 // create a graphics object, clear the large bitmap, and then draw our bitmap in the center
@@ -65,7 +65,7 @@ namespace HyperCard
                 g.DrawImage(bitmap, new Point(1, 1));
                 g.Flush();
 
-                // this is a pain - C# GDI+ does not have a flood fill, so we get it from GDI instead of rolling once from scratch
+                // this is a pain - C# GDI+ does not have a flood fill, so we get it from GDI instead of rolling one from scratch
                 IntPtr hdc1 = g.GetHdc();
                 IntPtr hdc2 = CreateCompatibleDC(hdc1);
                 SelectObject(hdc2, fillBitmap.GetHbitmap());
@@ -74,7 +74,7 @@ namespace HyperCard
                 int temp = GetPixel(hdc2, 0, 0);
                 bool r = ExtFloodFill(hdc2, 0, 0, temp, 1);
 
-                // we had to draw to a compatible DC, so now we have to blit back to our larger birmap
+                // we had to draw to a compatible DC, so now we have to blit back to our larger bitmap
                 BitBlt(hdc1, 0, 0, fillBitmap.Width, fillBitmap.Height, hdc2, 0, 0, 0x00CC0020);
 
                 // try to dispose of everything and set it back the way it was

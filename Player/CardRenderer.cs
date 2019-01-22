@@ -94,7 +94,7 @@ namespace Player
             if (cardBitmap != null && cardBitmap.Image != null)
             {
                 ImageAttributes attr = new ImageAttributes();
-                //attr.SetColorKey(Color.White, Color.White);
+                if (cardBitmap.Mask == null) attr.SetColorKey(Color.White, Color.White);
 
                 g.DrawImage(cardBitmap.Image, this.ClientRectangle, 0, 0, cardBitmap.Image.Width, cardBitmap.Image.Height, GraphicsUnit.Pixel, attr);
             }

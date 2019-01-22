@@ -145,7 +145,11 @@ namespace Player
                 {
                     for (int i = 0, y = 0; i < lines.Length; i++)
                     {
-                        if (string.IsNullOrWhiteSpace(lines[i])) continue;
+                        if (string.IsNullOrWhiteSpace(lines[i]))
+                        {
+                            y++;
+                            continue;
+                        }
                         y += RenderTextLine(blackBrush, fieldFont, part, lines[i], part.Rect.Top + part.TextHeight * y, g);
 
                         if (part.TextHeight * (y + 1) > part.Rect.Height) break;
@@ -184,6 +188,8 @@ namespace Player
                     }
                 }
 
+                if (i == 0) return lines;   // we couldn't fit any more
+
                 textSize = g.MeasureString(remaining.Substring(0, i), font);
 
                 float textX = part.Rect.Left;// +margin;
@@ -193,6 +199,7 @@ namespace Player
                 else if (part.TextAlign == HyperCard.TextAlign.Right) textX += part.Rect.Width - textSize.Width - margin;
                 else textX += margin;
 
+                if (part.TextHeight * (lines + 1) > part.Rect.Height) return lines;
                 g.DrawString(remaining.Substring(0, i), font, fontBrush, textX, textY + part.TextHeight * lines);
                 lines++;
 

@@ -463,13 +463,13 @@ namespace HyperCard
 
             if (partContentSize > 1)
             {
-                byte partContentType = reader.ReadByte();
+                byte partStyleData = reader.ReadByte();
 
                 short[] formatting = null;
 
-                if ((partContentType & 0x80) == 0x80)
+                if ((partStyleData & 0x80) == 0x80)
                 {
-                    int size = ((partContentType & 0x7f) << 8) | reader.ReadByte();
+                    int size = ((partStyleData & 0x7f) << 8) | reader.ReadByte();
                     formatting = new short[(size - 2) / 2];
                     for (int i = 0; i < (size - 2) / 4; i++)
                     {
@@ -477,7 +477,6 @@ namespace HyperCard
                         short styleId = reader.ReadInt16();
                         formatting[i * 2] = textPosition;
                         formatting[i * 2 + 1] = styleId;
-                        Console.WriteLine($"Syle {styleId} at text position {textPosition}");
                     }
 
                     partContentSize -= (short)(size - 1);

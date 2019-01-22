@@ -138,7 +138,7 @@ namespace Player
             string[] lines = (stack.CurrentCard.BackgroundOverrides.ContainsKey(part.ID) ? stack.CurrentCard.BackgroundOverrides[part.ID].Split(new char[] { '\r' }) : part.Lines);
             if (lines == null && string.IsNullOrWhiteSpace(part.Contents)) return;
 
-            using (Brush blackBrush = new SolidBrush(Color.Black))
+            using (Brush blackBrush = new SolidBrush(((int)part.TextStyle & 2048) == 2048 ? Color.Gray : Color.Black))
             using (System.Drawing.Font fieldFont = MacFont.GetFont(fontFamily, part.TextSize, (FontStyle)((int)part.TextStyle & 0x07)))
             {
                 if (lines != null)

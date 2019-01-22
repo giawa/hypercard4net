@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Text;
 
 namespace HyperCard
 {
@@ -8,15 +7,15 @@ namespace HyperCard
     {
         private BinaryReader reader;
 
-        private long position = 0;
-
         public long Position
         {
-            get { return position; }
+            get
+            {
+                return reader.BaseStream.Position;
+            }
             set
             {
-                position = value;
-                reader.BaseStream.Seek(position, SeekOrigin.Begin);
+                reader.BaseStream.Seek(value, SeekOrigin.Begin);
             }
         }
 
@@ -38,45 +37,36 @@ namespace HyperCard
 
             while ((stringProcessor[i++] = reader.ReadByte()) != 0) ;
 
-            position += i;
-
             return Utilities.FromMacRoman(stringProcessor, i - 1);
         }
 
         public char[] ReadChars(int count)
         {
-            position += count;
             return reader.ReadChars(count);
         }
 
         public byte[] ReadBytes(int count)
         {
-            position += count;
             return reader.ReadBytes(count);
         }
 
         public byte ReadByte()
         {
-            position++;
             return reader.ReadByte();
         }
 
         public short ReadInt16()
         {
-            ushort value = reader.ReadUInt16();
-            ushort swap = (ushort)(((value & 0x00ff) << 8) | ((value & 0xff00) >> 8));
-            position += 2;
-
-            return unchecked((short)swap);
+            var bytes = reader.ReadBytes(2);
+            if (BitConverter.IsLittleEndian) Array.Reverse(bytes);
+            return BitConverter.ToInt16(bytes, 0);
         }
 
         public int ReadInt32()
         {
-            uint value = reader.ReadUInt32();
-            uint swap = ((value & 0x000000ff) << 24) | ((value & 0x0000ff00) << 8) | ((value & 0x00ff0000) >> 8) | ((value & 0xff000000) >> 24);
-            position += 4;
-
-            return unchecked((int)swap);
+            var bytes = reader.ReadBytes(4);
+            if (BitConverter.IsLittleEndian) Array.Reverse(bytes);
+            return BitConverter.ToInt32(bytes, 0);
         }
 
         public void Dispose()

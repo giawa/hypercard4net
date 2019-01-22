@@ -32,7 +32,7 @@ namespace Player
         {
             if (this.Parent is Window)
             {
-                this.Parent.ClientSize = new System.Drawing.Size(stack.Width, stack.Height + 24);
+                this.Parent.ClientSize = new Size(stack.Width, stack.Height + 24);
                 this.Parent.Text = "HyperCard .NET : " + stack.Name;
             }
 
@@ -162,7 +162,7 @@ namespace Player
             }
         }
 
-        private int RenderTextLine(Brush fontBrush, System.Drawing.Font font, HyperCard.Part part, string s, int y, Graphics g)
+        private int RenderTextLine(Brush fontBrush, Font font, HyperCard.Part part, string s, int y, Graphics g)
         {
             int lines = 0, i = 0;
             int margin = part.WideMargins ? 5 : 1;
@@ -172,7 +172,7 @@ namespace Player
 
             while (remaining.Length > 0)
             {
-                System.Drawing.SizeF textSize;
+                SizeF textSize;
 
                 for (i = 0; i < remaining.Length; i++)
                 {
@@ -269,7 +269,7 @@ namespace Player
                 // draw the text in this button
                 if (part.ShowName)
                 {
-                    using (Brush blackBrush = new SolidBrush(Color.Black))
+                    using (Brush blackBrush = new SolidBrush(((int)part.TextStyle & 2048) == 2048 ? Color.Gray : Color.Black))
                     using (Font buttonFont = MacFont.GetFont("Arial", part.TextSize, (FontStyle)(((int)part.TextStyle >> 8) & 0x07)))
                     using (Font iconFont = MacFont.GetFont("Arial", 10, (FontStyle)(((int)part.TextStyle >> 8) & 0x07)))
                     {

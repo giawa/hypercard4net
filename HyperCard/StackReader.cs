@@ -307,6 +307,8 @@ namespace HyperCard
                         // seek to script
                         reader.Position = startBlock + 0x0600;
                         Script = new string(reader.ReadChars((int)(nextBlock - reader.Position))).Replace((char)65533, '∞');
+                        if (Script.Contains("\0")) Script = Script.Substring(0, Script.IndexOf('\0'));
+                        HyperTalkScript = Scripting.HypertalkScripting.ParseScript(Script);
                     }
 
                     reader.Position = nextBlock;

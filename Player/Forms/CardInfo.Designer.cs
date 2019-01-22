@@ -33,9 +33,9 @@
             this.labelID = new System.Windows.Forms.Label();
             this.labelButtons = new System.Windows.Forms.Label();
             this.labelFields = new System.Windows.Forms.Label();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.checkBox2 = new System.Windows.Forms.CheckBox();
-            this.checkBox3 = new System.Windows.Forms.CheckBox();
+            this.checkBoxCardMarked = new System.Windows.Forms.CheckBox();
+            this.checkBoxDontSearchCard = new System.Windows.Forms.CheckBox();
+            this.checkBoxCantDeleteCard = new System.Windows.Forms.CheckBox();
             this.buttonScript = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonOK = new System.Windows.Forms.Button();
@@ -87,35 +87,35 @@
             this.labelFields.TabIndex = 3;
             this.labelFields.Text = "Contains 7 card fields";
             // 
-            // checkBox1
+            // checkBoxCardMarked
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(16, 116);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(87, 17);
-            this.checkBox1.TabIndex = 5;
-            this.checkBox1.Text = "Card Marked";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBoxCardMarked.AutoSize = true;
+            this.checkBoxCardMarked.Location = new System.Drawing.Point(16, 116);
+            this.checkBoxCardMarked.Name = "checkBoxCardMarked";
+            this.checkBoxCardMarked.Size = new System.Drawing.Size(87, 17);
+            this.checkBoxCardMarked.TabIndex = 5;
+            this.checkBoxCardMarked.Text = "Card Marked";
+            this.checkBoxCardMarked.UseVisualStyleBackColor = true;
             // 
-            // checkBox2
+            // checkBoxDontSearchCard
             // 
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.Location = new System.Drawing.Point(16, 133);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(113, 17);
-            this.checkBox2.TabIndex = 6;
-            this.checkBox2.Text = "Don\'t Search Card";
-            this.checkBox2.UseVisualStyleBackColor = true;
+            this.checkBoxDontSearchCard.AutoSize = true;
+            this.checkBoxDontSearchCard.Location = new System.Drawing.Point(16, 133);
+            this.checkBoxDontSearchCard.Name = "checkBoxDontSearchCard";
+            this.checkBoxDontSearchCard.Size = new System.Drawing.Size(113, 17);
+            this.checkBoxDontSearchCard.TabIndex = 6;
+            this.checkBoxDontSearchCard.Text = "Don\'t Search Card";
+            this.checkBoxDontSearchCard.UseVisualStyleBackColor = true;
             // 
-            // checkBox3
+            // checkBoxCantDeleteCard
             // 
-            this.checkBox3.AutoSize = true;
-            this.checkBox3.Location = new System.Drawing.Point(16, 150);
-            this.checkBox3.Name = "checkBox3";
-            this.checkBox3.Size = new System.Drawing.Size(109, 17);
-            this.checkBox3.TabIndex = 7;
-            this.checkBox3.Text = "Can\'t Delete Card";
-            this.checkBox3.UseVisualStyleBackColor = true;
+            this.checkBoxCantDeleteCard.AutoSize = true;
+            this.checkBoxCantDeleteCard.Location = new System.Drawing.Point(16, 150);
+            this.checkBoxCantDeleteCard.Name = "checkBoxCantDeleteCard";
+            this.checkBoxCantDeleteCard.Size = new System.Drawing.Size(109, 17);
+            this.checkBoxCantDeleteCard.TabIndex = 7;
+            this.checkBoxCantDeleteCard.Text = "Can\'t Delete Card";
+            this.checkBoxCantDeleteCard.UseVisualStyleBackColor = true;
             // 
             // buttonScript
             // 
@@ -128,12 +128,14 @@
             // 
             // buttonCancel
             // 
+            this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.buttonCancel.Location = new System.Drawing.Point(186, 174);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 9;
             this.buttonCancel.Text = "Cancel";
             this.buttonCancel.UseVisualStyleBackColor = true;
+            this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
             // 
             // buttonOK
             // 
@@ -143,6 +145,7 @@
             this.buttonOK.TabIndex = 10;
             this.buttonOK.Text = "OK";
             this.buttonOK.UseVisualStyleBackColor = true;
+            this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
             // 
             // textBoxCardName
             // 
@@ -153,16 +156,18 @@
             // 
             // CardInfo
             // 
+            this.AcceptButton = this.buttonOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.buttonCancel;
             this.ClientSize = new System.Drawing.Size(271, 207);
             this.Controls.Add(this.textBoxCardName);
             this.Controls.Add(this.buttonOK);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonScript);
-            this.Controls.Add(this.checkBox3);
-            this.Controls.Add(this.checkBox2);
-            this.Controls.Add(this.checkBox1);
+            this.Controls.Add(this.checkBoxCantDeleteCard);
+            this.Controls.Add(this.checkBoxDontSearchCard);
+            this.Controls.Add(this.checkBoxCardMarked);
             this.Controls.Add(this.labelButtons);
             this.Controls.Add(this.labelFields);
             this.Controls.Add(this.labelID);
@@ -182,9 +187,9 @@
         private System.Windows.Forms.Label labelID;
         private System.Windows.Forms.Label labelButtons;
         private System.Windows.Forms.Label labelFields;
-        private System.Windows.Forms.CheckBox checkBox1;
-        private System.Windows.Forms.CheckBox checkBox2;
-        private System.Windows.Forms.CheckBox checkBox3;
+        private System.Windows.Forms.CheckBox checkBoxCardMarked;
+        private System.Windows.Forms.CheckBox checkBoxDontSearchCard;
+        private System.Windows.Forms.CheckBox checkBoxCantDeleteCard;
         private System.Windows.Forms.Button buttonScript;
         private System.Windows.Forms.Button buttonCancel;
         private System.Windows.Forms.Button buttonOK;

@@ -14,6 +14,12 @@ namespace Player
 
             file.DropDownItems.Add("Open Stack");
             ((ToolStripMenuItem)file.DropDownItems[file.DropDownItems.Count - 1]).ShortcutKeys = Keys.O | Keys.Control;
+            ((ToolStripMenuItem)file.DropDownItems[file.DropDownItems.Count - 1]).Click += (sender, ea) =>
+            {
+                OpenFileDialog open = new OpenFileDialog();
+                if (open.ShowDialog() != DialogResult.OK) return;
+                window.OpenStack(new HyperCard.Stack(open.FileName));
+            };
 
             file.DropDownItems.Add("Close Stack");
             ((ToolStripMenuItem)file.DropDownItems[file.DropDownItems.Count - 1]).ShortcutKeys = Keys.W | Keys.Control;
@@ -167,10 +173,17 @@ namespace Player
             ToolStripMenuItem objects = new ToolStripMenuItem("Objects");
 
             objects.DropDownItems.Add("Button Info");
+            ((ToolStripMenuItem)objects.DropDownItems[objects.DropDownItems.Count - 1]).Enabled = false;
 
             objects.DropDownItems.Add("Field Info");
+            ((ToolStripMenuItem)objects.DropDownItems[objects.DropDownItems.Count - 1]).Enabled = false;
 
             objects.DropDownItems.Add("Card Info");
+            ((ToolStripMenuItem)objects.DropDownItems[objects.DropDownItems.Count - 1]).Click += (sender, ea) =>
+            {
+                Forms.CardInfo info = new Forms.CardInfo(window.Renderer.Stack.CurrentCard);
+                info.ShowDialog();
+            };
 
             objects.DropDownItems.Add("Background Info");
 

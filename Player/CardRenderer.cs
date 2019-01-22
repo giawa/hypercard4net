@@ -358,13 +358,27 @@ namespace Player
                         invalidate = true;
                     }
 
-                    selectedPart.OnMouseLeave();
+                    try
+                    {
+                        selectedPart.OnMouseLeave();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
                 }
 
                 // OnMouseEnter
                 if (part != null)
                 {
-                    part.OnMouseEnter();
+                    try
+                    {
+                        part.OnMouseEnter();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
                 }
 
                 // Rehighlight a previously clicked part
@@ -387,7 +401,15 @@ namespace Player
             base.OnMouseDown(e);
 
             if (selectedPart == null) return;
-            selectedPart.OnMouseDown();
+
+            try
+            {
+                selectedPart.OnMouseDown();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
 
             if (selectedPart.Type == HyperCard.PartType.Button && selectedPart.AutoHighlight)
             {
@@ -407,7 +429,15 @@ namespace Player
             mouseDown = false;
 
             if (selectedPart == null) return;
-            selectedPart.OnMouseUp();
+
+            try
+            {
+                selectedPart.OnMouseUp();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
 
             if (selectedPart.Type == HyperCard.PartType.Button && selectedPart.AutoHighlight)
             {

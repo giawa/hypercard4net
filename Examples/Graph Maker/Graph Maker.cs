@@ -5,7 +5,7 @@ public class Card15991
 {
     public class CardButton5
     {
-        public static void OnMouseUp(HyperCard.Part button)
+        public static void mouseUp(HyperCard.Part button)
         {
             var stack = button.Parent.Stack;
 
@@ -15,7 +15,7 @@ public class Card15991
 
     public class CardButton6
     {
-        public static void OnMouseUp(HyperCard.Part button)
+        public static void mouseUp(HyperCard.Part button)
         {
             var stack = button.Parent.Stack;
 
@@ -25,7 +25,7 @@ public class Card15991
     
     public class CardButton1
     {
-        public static void OnMouseUp(HyperCard.Part button)
+        public static void mouseUp(HyperCard.Part button)
         {
             var stack = button.Parent.Stack;
 
@@ -35,7 +35,7 @@ public class Card15991
 
     public class CardButton15
     {
-        public static void OnMouseUp(HyperCard.Part button)
+        public static void mouseUp(HyperCard.Part button)
         {
             var stack = button.Parent.Stack;
 
@@ -45,7 +45,7 @@ public class Card15991
 
     public class CardButton16
     {
-        public static void OnMouseUp(HyperCard.Part button)
+        public static void mouseUp(HyperCard.Part button)
         {
             var stack = button.Parent.Stack;
 
@@ -55,7 +55,7 @@ public class Card15991
 
     public class CardButton17
     {
-        public static void OnMouseUp(HyperCard.Part button)
+        public static void mouseUp(HyperCard.Part button)
         {
             var stack = button.Parent.Stack;
 
@@ -68,7 +68,7 @@ public class Background11532
 {
     public class BackgroundButton34
     {
-        public static void OnMouseUp(HyperCard.Part button)
+        public static void mouseUp(HyperCard.Part button)
         {
             var stack = button.Parent.Stack;
 
@@ -78,7 +78,7 @@ public class Background11532
 
     public class BackgroundButton10
     {
-        public static void OnMouseUp(HyperCard.Part button)
+        public static void mouseUp(HyperCard.Part button)
         {
             var stack = button.Parent.Stack;
 
@@ -88,7 +88,7 @@ public class Background11532
 
     public class BackgroundButton11
     {
-        public static void OnMouseUp(HyperCard.Part button)
+        public static void mouseUp(HyperCard.Part button)
         {
             var stack = button.Parent.Stack;
 
@@ -98,7 +98,7 @@ public class Background11532
 
     public class BackgroundButton14
     {
-        public static void OnMouseUp(HyperCard.Part button)
+        public static void mouseUp(HyperCard.Part button)
         {
             var stack = button.Parent.Stack;
 
@@ -108,7 +108,7 @@ public class Background11532
 
     public class BackgroundButton12
     {
-        public static void OnMouseUp(HyperCard.Part button)
+        public static void mouseUp(HyperCard.Part button)
         {
             var stack = button.Parent.Stack;
 
@@ -118,7 +118,7 @@ public class Background11532
 
     public class BackgroundButton15
     {
-        public static void OnMouseUp(HyperCard.Part button)
+        public static void mouseUp(HyperCard.Part button)
         {
             button.Parent.Stack.FirstCard();
         }

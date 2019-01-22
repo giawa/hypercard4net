@@ -486,32 +486,32 @@ namespace HyperCard
 
         public void OnMouseDown()
         {
-            InvokeCompiledMethod("OnMouseDown");
+            InvokeCompiledMethod("mouseDown");
         }
 
         public void OnMouseStillDown()
         {
-            InvokeCompiledMethod("OnMouseStillDown");
+            InvokeCompiledMethod("mouseStillDown");
         }
 
         public void OnMouseUp()
         {
-            InvokeCompiledMethod("OnMouseUp");
+            InvokeCompiledMethod("mouseUp");
         }
 
         public void OnMouseEnter()
         {
-            InvokeCompiledMethod("OnMouseEnter");
+            InvokeCompiledMethod("mouseEnter");
         }
 
         public void OnMouseWithin()
         {
-            InvokeCompiledMethod("OnMouseWithin");
+            InvokeCompiledMethod("mouseWithin");
         }
 
         public void OnMouseLeave()
         {
-            InvokeCompiledMethod("OnMouseLeave");
+            InvokeCompiledMethod("mouseLeave");
         }
         #endregion
     }

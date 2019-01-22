@@ -125,12 +125,12 @@ namespace HyperCard
                 {
                     if (currentCard != null)
                     {
-                        currentCard.InvokeCompiledMethod("CloseCard");
+                        currentCard.InvokeCompiledMethod("closeCard");
                     }
 
                     currentCard = value;
                     FindEntry();
-                    currentCard.InvokeCompiledMethod("OpenCard");
+                    currentCard.InvokeCompiledMethod("openCard");
                     if (Renderer != null) Renderer.Invalidate();
                 }
             }

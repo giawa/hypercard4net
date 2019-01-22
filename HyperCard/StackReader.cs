@@ -395,6 +395,29 @@ namespace HyperCard
             }
         }
 
+        public Card GetCardFromIndex(int index)
+        {
+            int pageIndex = 0;
+            int entryIndex = 0;
+
+            for (int i = 0; i < index; i++)
+            {
+                if (Pages[pageIndex].PageEntries.Count == entryIndex)
+                {
+                    pageIndex++;
+
+                    if (Pages.Count == pageIndex)
+                    {
+                        pageIndex = 0;
+                    }
+
+                    entryIndex = 0;
+                }
+            }
+
+            return GetCardFromID(List.Pages[pageIndex].PageEntries[entryIndex]);
+        }
+
         public Card GetCardFromID(int id)
         {
             foreach (var card in Cards)

@@ -175,7 +175,7 @@ namespace HyperCard
             Dictionary<string, Type> types = new Dictionary<string, Type>();
             foreach (var type in stackModule.GetTypes())
             {
-                types.Add(type.Name, type);
+                types.Add(type.FullName, type);
             }
 
             // now hook up all of the types
@@ -183,18 +183,20 @@ namespace HyperCard
 
             foreach (var background in Backgrounds)
             {
-                background.CompiledScript = FindType(types, string.Format("Background{0}", background.ID));
+                string prefix = string.Format("Background{0}", background.ID);
+                background.CompiledScript = FindType(types, prefix);
 
                 foreach (var part in background.Parts)
-                    part.CompiledScript = FindType(types, string.Format("Background{0}{1}", part.Type, part.ID));
+                    part.CompiledScript = FindType(types, string.Format(prefix + "+Background{0}{1}", part.Type, part.ID));
             }
 
             foreach (var card in Cards)
             {
-                card.CompiledScript = FindType(types, string.Format("Card{0}", card.ID));
+                string prefix = string.Format("Card{0}", card.ID);
+                card.CompiledScript = FindType(types, prefix);
 
                 foreach (var part in card.Parts)
-                    part.CompiledScript = FindType(types, string.Format("Card{0}{1}", part.Type, part.ID));
+                    part.CompiledScript = FindType(types, string.Format(prefix + "+Card{0}{1}", part.Type, part.ID));
             }
         }
 

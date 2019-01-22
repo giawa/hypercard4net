@@ -1,6 +1,6 @@
 using System;
 
-namespace HypercardHome
+public class Background2717
 {
     public class BackgroundButton68
     {
@@ -62,26 +62,6 @@ namespace HypercardHome
         }
     }
 
-    public class BackgroundButton59
-    {
-        public static void OnMouseUp(HyperCard.Part button)
-        {
-            var stack = button.Parent.Stack;
-
-            stack.PreviousCard();
-        }
-    }
-
-    public class BackgroundButton56
-    {
-        public static void OnMouseUp(HyperCard.Part button)
-        {
-            var stack = button.Parent.Stack;
-
-            stack.PreviousCard();
-        }
-    }
-
     public class BackgroundButton170
     {
         public static void OnMouseUp(HyperCard.Part button)
@@ -91,14 +71,17 @@ namespace HypercardHome
             stack.NextCard();
         }
     }
+}
 
-    public class BackgroundButton58
+public class Background4099
+{
+    public class BackgroundButton56
     {
         public static void OnMouseUp(HyperCard.Part button)
         {
             var stack = button.Parent.Stack;
 
-            stack.NextCard();
+            stack.PreviousCard();
         }
     }
 
@@ -111,38 +94,54 @@ namespace HypercardHome
             stack.NextCard();
         }
     }
+}
 
-    public class Background2717
+public class Background16078
+{
+    public class BackgroundButton59
     {
-        public static void OpenCard(HyperCard.Background background)
+        public static void OnMouseUp(HyperCard.Part button)
         {
+            var stack = button.Parent.Stack;
+
+            stack.PreviousCard();
         }
     }
 
-    public class Card5698
+    public class BackgroundButton58
     {
-        public static void UpdateUserLevel(HyperCard.Stack stack, HyperCard.Card card, int userLevel)
+        public static void OnMouseUp(HyperCard.Part button)
         {
-            if (stack.UserLevel == (HyperCard.UserLevel)userLevel) return;
+            var stack = button.Parent.Stack;
 
-            // set the stack user level
-            stack.UserLevel = (HyperCard.UserLevel)userLevel;
-
-            // move the arrow button to the correct location
-            card.GetPartFromName("Arrow").Rect.Top = card.GetPartFromName("UserLevel " + userLevel).Rect.Top;
-
-            // set the highlight of the buttons correctly
-            for (int i = 1; i < 6; i++)
-                card.GetPartFromName("UserLevel " + i).Highlight = (i <= userLevel);
-
-            card.GetPartFromID(1).Visible = userLevel >= 5;
-            card.GetPartFromID(3).Visible = userLevel >= 3;
-            card.GetPartFromID(2).Visible = userLevel >= 2;
-
-            stack.Renderer.Invalidate();
+            stack.NextCard();
         }
     }
+}
 
+public class Card5698
+{
+    public static void UpdateUserLevel(HyperCard.Stack stack, HyperCard.Card card, int userLevel)
+    {
+        if (stack.UserLevel == (HyperCard.UserLevel)userLevel) return;
+
+        // set the stack user level
+        stack.UserLevel = (HyperCard.UserLevel)userLevel;
+
+        // move the arrow button to the correct location
+        card.GetPartFromName("Arrow").Rect.Top = card.GetPartFromName("UserLevel " + userLevel).Rect.Top;
+
+        // set the highlight of the buttons correctly
+        for (int i = 1; i < 6; i++)
+            card.GetPartFromName("UserLevel " + i).Highlight = (i <= userLevel);
+
+        card.GetPartFromID(1).Visible = userLevel >= 5;
+        card.GetPartFromID(3).Visible = userLevel >= 3;
+        card.GetPartFromID(2).Visible = userLevel >= 2;
+
+        stack.Renderer.Invalidate();
+    }
+    
     public class CardButton8
     {
         public static void OnMouseUp(HyperCard.Part button)

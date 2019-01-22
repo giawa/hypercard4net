@@ -109,6 +109,8 @@ namespace HyperCard
 
         public string Script { get; set; }
 
+        public Scripting.HypertalkScripting.HScript HyperTalkScript { get; set; }
+
         private int firstBackgroundId = -1;
         private int firstCardId = -1;
         private int password = 0;

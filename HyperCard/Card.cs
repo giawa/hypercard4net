@@ -101,6 +101,8 @@ namespace HyperCard
 
         public string Script { get; set; }
 
+        public Scripting.HypertalkScripting.HScript HyperTalkScript { get; set; }
+
         public Stack Stack { get; private set; }
 
         public Type CompiledScript { get; set; }
@@ -144,6 +146,8 @@ namespace HyperCard
             Name = reader.ReadString();
 
             Script = reader.ReadString();
+            HyperTalkScript = Scripting.HypertalkScripting.ParseScript(Script);
+
             reader.Position = nextBlock;
         }
 
@@ -204,6 +208,8 @@ namespace HyperCard
 
         public string Script { get; set; }
 
+        public Scripting.HypertalkScripting.HScript HyperTalkScript { get; set; }
+
         public Stack Stack { get; private set; }
 
         public Type CompiledScript { get; set; }
@@ -243,6 +249,8 @@ namespace HyperCard
             Name = reader.ReadString();
 
             Script = reader.ReadString();
+            HyperTalkScript = Scripting.HypertalkScripting.ParseScript(Script);
+
             reader.Position = nextBlock;
         }
 
@@ -353,6 +361,8 @@ namespace HyperCard
 
         public string Script { get; set; }
 
+        public Scripting.HypertalkScripting.HScript HyperTalkScript { get; set; }
+
         public bool ShowName { get; set; }
 
         public bool AutoSelect { get; set; }
@@ -412,6 +422,7 @@ namespace HyperCard
             Name = reader.ReadString();
             reader.ReadByte();  // always zero
             Script = reader.ReadString();
+            HyperTalkScript = Scripting.HypertalkScripting.ParseScript(Script);
 
             reader.Position = nextBlock;
             //Console.WriteLine("nextBlock: {0}   actual position: {1}", nextBlock, reader.Position);
@@ -474,7 +485,16 @@ namespace HyperCard
 
         internal void InvokeCompiledMethod(string methodName)
         {
-            bool handled = Scripting.CSharpScripting.InvokeCompiledMethod(CompiledScript, methodName, this);
+            bool handled = false;
+
+            if (CompiledScript != null)
+            {
+                handled = Scripting.CSharpScripting.InvokeCompiledMethod(CompiledScript, methodName, this);
+            }
+            else if (HyperTalkScript != null && HyperTalkScript.Methods.ContainsKey(methodName.ToLower()))
+            {
+                HyperTalkScript.Methods[methodName.ToLower()].Interpret(this);
+            }
 
             //if (!handled) EscalateMessage(methodName);
         }

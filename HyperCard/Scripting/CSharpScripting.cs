@@ -6,7 +6,7 @@ using System.CodeDom.Compiler;
 
 namespace HyperCard.Scripting
 {
-    public class CSharpScripting
+    public static class CSharpScripting
     {
         /// <summary>
         /// Get a compiled Type from a script.  This Type can contain multiple methods which will be

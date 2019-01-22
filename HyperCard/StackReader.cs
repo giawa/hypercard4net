@@ -63,6 +63,12 @@ namespace HyperCard
 
     public class Stack
     {
+        public static List<string> Stacks = new List<string>()
+        {
+            "HyperCard Stacks",
+            "More Stacks"
+        };
+
         public IStackRenderer Renderer { get; set; }
 
         public List<Woba> Bitmaps = new List<Woba>();
@@ -208,6 +214,17 @@ namespace HyperCard
 
         public Stack(string filename)
         {
+            if (!File.Exists(filename))
+            {
+                foreach (var path in Stacks)
+                {
+                    if (File.Exists(path + "/" + filename))
+                    {
+                        filename = path + "/" + filename;
+                        break;
+                    }
+                }
+            }
             if (!File.Exists(filename)) return;
 
             FileInfo info = new FileInfo(filename);

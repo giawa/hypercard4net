@@ -453,6 +453,14 @@ namespace HyperCard
             {
                 byte partContentType = reader.ReadByte();
 
+                if (partContentType == 128)
+                {
+                    byte prefixCount = reader.ReadByte();   // appears to be size of data minus one
+                    reader.ReadBytes(prefixCount - 2);      // read the unknown data
+                    partContentSize -= (short)(prefixCount - 1);
+                    partContentType = 0;    // now that we've skipped the unknown data we can parse as normal
+                }
+
                 if (partContentType == 0)
                 {
                     string temp = Utilities.FromMacRoman(reader.ReadBytes(partContentSize - 1), partContentSize - 1);

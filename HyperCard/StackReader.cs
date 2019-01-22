@@ -240,7 +240,7 @@ namespace HyperCard
             {
                 while (reader.Position < reader.Length)
                 {
-                    int blockSize = reader.ReadInt32();
+                    int blockSize = reader.ReadInt32() & 0x00ffffff;    // Looks like the top bits are used for something...
                     if ((blockSize % 32) != 0) blockSize += 32 - blockSize % 32;
                     string blockType = new string(reader.ReadChars(4));
                     int blockID = reader.ReadInt32();

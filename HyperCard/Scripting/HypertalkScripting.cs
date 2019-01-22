@@ -172,7 +172,7 @@ namespace HyperCard.Scripting
             { "tenth", 10 },
         };
 
-        public static HScript ParseScript(string script)
+        public static HScript ParseScript(string script, IPart part)
         {
             HScript result = new HScript();
 
@@ -185,6 +185,12 @@ namespace HyperCard.Scripting
             {
                 string line = lines[i].Trim().ToLower();    // hack for now, we should find strings and keep their case sensitivity
                 if (line.StartsWith("--")) continue;    // comment
+
+                // total hack to get the Home stack working a bit better until we have a full intepreter
+                if (line.StartsWith("go") && line.Contains("(the short name of me)"))
+                {
+                    line = line.Replace("(the short name of me)", "\"" + part.Name.ToLower() + "\"");
+                }
 
                 string[] words = line.Split(wordSplit);
 

@@ -68,17 +68,22 @@ namespace HyperCard
         Group = 128
     }
 
-    public interface IPartContainer
+    public interface IPart
     {
-        Stack Stack { get; }
+        string Name { get; }
 
         int ID { get; }
-
-        string Name { get; }
 
         Type CompiledScript { get; set; }
 
         void InvokeCompiledMethod(string methodName);
+
+        Scripting.HypertalkScripting.HScript HyperTalkScript { get; }
+    }
+
+    public interface IPartContainer : IPart
+    {
+        Stack Stack { get; }
 
         Part GetPartFromID(int id);
     }
@@ -146,7 +151,7 @@ namespace HyperCard
             Name = reader.ReadString();
 
             Script = reader.ReadString();
-            HyperTalkScript = Scripting.HypertalkScripting.ParseScript(Script);
+            HyperTalkScript = Scripting.HypertalkScripting.ParseScript(Script, this);
 
             reader.Position = nextBlock;
         }
@@ -249,7 +254,7 @@ namespace HyperCard
             Name = reader.ReadString();
 
             Script = reader.ReadString();
-            HyperTalkScript = Scripting.HypertalkScripting.ParseScript(Script);
+            HyperTalkScript = Scripting.HypertalkScripting.ParseScript(Script, this);
 
             reader.Position = nextBlock;
         }
@@ -306,11 +311,11 @@ namespace HyperCard
         }
     }
 
-    public class Part
+    public class Part : IPart
     {
         public bool Dirty { get; set; }
 
-        public short ID { get; private set; }
+        public int ID { get; private set; }
 
         public PartType Type { get; private set; }
 
@@ -422,7 +427,7 @@ namespace HyperCard
             Name = reader.ReadString();
             reader.ReadByte();  // always zero
             Script = reader.ReadString();
-            HyperTalkScript = Scripting.HypertalkScripting.ParseScript(Script);
+            HyperTalkScript = Scripting.HypertalkScripting.ParseScript(Script, this);
 
             reader.Position = nextBlock;
             //Console.WriteLine("nextBlock: {0}   actual position: {1}", nextBlock, reader.Position);
@@ -483,7 +488,7 @@ namespace HyperCard
         #region Messages
         public Type CompiledScript { get; set; }
 
-        internal void InvokeCompiledMethod(string methodName)
+        public void InvokeCompiledMethod(string methodName)
         {
             bool handled = false;
 

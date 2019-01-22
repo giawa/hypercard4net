@@ -61,7 +61,7 @@ namespace HyperCard
         }
     }
 
-    public class Stack
+    public class Stack : IPart
     {
         public static List<string> Stacks = new List<string>()
         {
@@ -327,7 +327,7 @@ namespace HyperCard
                         reader.Position = startBlock + 0x0600;
                         Script = new string(reader.ReadChars((int)(nextBlock - reader.Position))).Replace((char)65533, '∞');
                         if (Script.Contains("\0")) Script = Script.Substring(0, Script.IndexOf('\0'));
-                        HyperTalkScript = Scripting.HypertalkScripting.ParseScript(Script);
+                        HyperTalkScript = Scripting.HypertalkScripting.ParseScript(Script, this);
                     }
 
                     reader.Position = nextBlock;
@@ -543,13 +543,15 @@ namespace HyperCard
             CurrentCard = GetCardFromID(List.Pages[pageIndex].PageEntries[entryIndex]);
         }
 
-        internal void InvokeCompiledMethod(string methodName)
+        public void InvokeCompiledMethod(string methodName)
         {
             bool handled = Scripting.CSharpScripting.InvokeCompiledMethod(CompiledScript, methodName, this);
 
             Console.WriteLine("Stack caught message " + methodName);
             //if (!handled) EscalateMessage(methodName);
         }
+
+        public int ID { get { return 0; } }
     }
 
     public class List

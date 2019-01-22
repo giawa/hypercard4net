@@ -16,8 +16,21 @@ namespace HyperCard
             if (MaskSize != 0) Mask = ProcessMask(reader.ReadBytes(MaskSize), MaskSize);
             if (ImageSize != 0) Image = ProcessImage(reader.ReadBytes(bitmapChunkSize - 64 - MaskSize), ImageSize);
 
-            //if (Mask != null) Mask.Save(BitmapID + "_mask.png", System.Drawing.Imaging.ImageFormat.Png);
-            //if (Image != null) Image.Save(BitmapID + ".png", System.Drawing.Imaging.ImageFormat.Png);
+            if (MaskSize != 0 && ImageSize != 0)
+            {
+                var lockedMask = Mask.LockBits(new Rectangle(0, 0, Mask.Width, Mask.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                byte[] maskData = new byte[Mask.Width * Mask.Height * 4];
+                Marshal.Copy(lockedMask.Scan0, maskData, 0, maskData.Length);
+                Mask.UnlockBits(lockedMask);
+
+                var lockedImage = Image.LockBits(new Rectangle(0, 0, Mask.Width, Mask.Height), System.Drawing.Imaging.ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                byte[] imageData = new byte[Mask.Width * Mask.Height * 4];
+                Marshal.Copy(lockedImage.Scan0, imageData, 0, maskData.Length);
+                for (int i = 0; i < maskData.Length; i += 4)
+                    if (maskData[i] == 255) imageData[i + 3] = 0;
+                Marshal.Copy(imageData, 0, lockedImage.Scan0, maskData.Length);
+                Image.UnlockBits(lockedImage);
+            }
         }
 
         public int BitmapID { get; private set; }

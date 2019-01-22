@@ -139,7 +139,7 @@ namespace Player
             if (lines == null && string.IsNullOrWhiteSpace(part.Contents)) return;
 
             using (Brush blackBrush = new SolidBrush(((int)part.TextStyle & 2048) == 2048 ? Color.Gray : Color.Black))
-            using (System.Drawing.Font fieldFont = MacFont.GetFont(fontFamily, part.TextSize, (FontStyle)((int)part.TextStyle & 0x07)))
+            using (Font fieldFont = MacFont.GetFont(fontFamily, part.TextSize, (FontStyle)(((int)part.TextStyle >> 8) & 7)))
             {
                 if (lines != null)
                 {
@@ -270,8 +270,8 @@ namespace Player
                 if (part.ShowName)
                 {
                     using (Brush blackBrush = new SolidBrush(Color.Black))
-                    using (System.Drawing.Font buttonFont = MacFont.GetFont("Arial", part.TextSize, (FontStyle)((int)part.TextStyle & 0x07)))
-                    using (System.Drawing.Font iconFont = MacFont.GetFont("Arial", 10, (FontStyle)((int)part.TextStyle & 0x07)))
+                    using (Font buttonFont = MacFont.GetFont("Arial", part.TextSize, (FontStyle)(((int)part.TextStyle >> 8) & 0x07)))
+                    using (Font iconFont = MacFont.GetFont("Arial", 10, (FontStyle)(((int)part.TextStyle >> 8) & 0x07)))
                     {
                         var font = (part.IconID != 0 ? iconFont : buttonFont);
 

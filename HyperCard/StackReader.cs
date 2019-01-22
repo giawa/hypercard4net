@@ -473,20 +473,24 @@ namespace HyperCard
 
         private int pageIndex, entryIndex;
 
-        private void FindEntry()
+        public int FindEntry()
         {
+            int cardNumber = 0;
+
             for (pageIndex = 0; pageIndex < Pages.Count; pageIndex++)
             {
                 for (entryIndex = 0; entryIndex < Pages[pageIndex].PageEntries.Count; entryIndex++)
                 {
                     if (CurrentCard == GetCardFromID(List.Pages[pageIndex].PageEntries[entryIndex]))
-                        return;
+                        return cardNumber;
+                    cardNumber++;
                 }
             }
 
             // we never found the card we were looking for, so return the first card in the stack
             pageIndex = 0;
             entryIndex = 0;
+            return 0;
         }
 
         public void FirstCard()

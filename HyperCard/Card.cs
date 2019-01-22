@@ -10,7 +10,7 @@ namespace HyperCard
     {
         DontSearch = 2048,
         NotShowPict = 4096,
-        CantDelete = 8192
+        CantDelete = 16384
     }
 
     [Flags]
@@ -58,14 +58,14 @@ namespace HyperCard
     [Flags]
     public enum TextStyle : ushort
     {
-        Bold = 1,
-        Italic = 2,
-        Underline = 4,
-        Outline = 8,
-        Shadow = 16,
-        Condense = 32,
-        Extend = 64,
-        Group = 128
+        Bold = 256,
+        Italic = 512,
+        Underline = 1024,
+        Outline = 2048,
+        Shadow = 4096,
+        Condense = 8192,
+        Extend = 16384,
+        Group = 32768
     }
 
     public interface IPart

@@ -32,10 +32,12 @@ namespace Player
             BuildMenu();
         }
 
-        private void OpenStack(HyperCard.Stack stack)
+        public void OpenStack(HyperCard.Stack stack)
         {
             this.cardRenderer1.SetStack(stack);
         }
+
+        public CardRenderer Renderer {  get { return cardRenderer1; } }
 
         public HyperCard.UserLevel UserLevel = 0;
 

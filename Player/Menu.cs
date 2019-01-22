@@ -107,6 +107,7 @@ namespace Player
 
             go.DropDownItems.Add("Home");
             ((ToolStripMenuItem)go.DropDownItems[go.DropDownItems.Count - 1]).ShortcutKeys = Keys.H | Keys.Control;
+            ((ToolStripMenuItem)go.DropDownItems[go.DropDownItems.Count - 1]).Click += (sender, ea) => window.OpenStack(new HyperCard.Stack("Home"));
 
             go.DropDownItems.Add("Help");
             ((ToolStripMenuItem)go.DropDownItems[go.DropDownItems.Count - 1]).ShortcutKeys = Keys.OemQuestion | Keys.Control;
@@ -118,15 +119,19 @@ namespace Player
 
             go.DropDownItems.Add("First");
             ((ToolStripMenuItem)go.DropDownItems[go.DropDownItems.Count - 1]).ShortcutKeys = Keys.D1 | Keys.Control;
+            ((ToolStripMenuItem)go.DropDownItems[go.DropDownItems.Count - 1]).Click += (sender, ea) => window.Renderer.Stack.FirstCard();
 
             go.DropDownItems.Add("Prev");
             ((ToolStripMenuItem)go.DropDownItems[go.DropDownItems.Count - 1]).ShortcutKeys = Keys.D2 | Keys.Control;
+            ((ToolStripMenuItem)go.DropDownItems[go.DropDownItems.Count - 1]).Click += (sender, ea) => window.Renderer.Stack.PreviousCard();
 
             go.DropDownItems.Add("Next");
             ((ToolStripMenuItem)go.DropDownItems[go.DropDownItems.Count - 1]).ShortcutKeys = Keys.D3 | Keys.Control;
+            ((ToolStripMenuItem)go.DropDownItems[go.DropDownItems.Count - 1]).Click += (sender, ea) => window.Renderer.Stack.NextCard();
 
             go.DropDownItems.Add("Last");
             ((ToolStripMenuItem)go.DropDownItems[go.DropDownItems.Count - 1]).ShortcutKeys = Keys.D4 | Keys.Control;
+            ((ToolStripMenuItem)go.DropDownItems[go.DropDownItems.Count - 1]).Click += (sender, ea) => window.Renderer.Stack.LastCard();
 
             go.DropDownItems.Add("-");
 

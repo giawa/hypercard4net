@@ -9,7 +9,7 @@ namespace HyperCard
     public enum CardFlags : ushort
     {
         DontSearch = 2048,
-        NotShowPict = 4096,
+        NotShowPict = 8192,
         CantDelete = 16384
     }
 
@@ -88,6 +88,18 @@ namespace HyperCard
         Part GetPartFromID(int id);
     }
 
+    public struct FormattedText
+    {
+        public string Text;
+        public short[] Formatting;
+
+        public FormattedText(string text, short[] formatting)
+        {
+            Text = text;
+            Formatting = formatting;
+        }
+    }
+
     public class Card : IPartContainer
     {
         public int ID { get; private set; }
@@ -112,13 +124,13 @@ namespace HyperCard
 
         public Type CompiledScript { get; set; }
 
-        public Dictionary<int, string> BackgroundOverrides { get; private set; }
+        public Dictionary<int, FormattedText> BackgroundOverrides { get; private set; }
 
         public Card(Stack stack, BigEndianBinaryReader reader, int cardChunkSize, int cardID)
         {
             Stack = stack;
             Parts = new List<Part>();
-            BackgroundOverrides = new Dictionary<int, string>();
+            BackgroundOverrides = new Dictionary<int, FormattedText>();
 
             long nextBlock = reader.Position + cardChunkSize - 12;
 
@@ -397,7 +409,7 @@ namespace HyperCard
 
         public byte Family { get; set; }
 
-        public string Contents { get; set; }
+        public FormattedText Contents { get; set; }
 
         public string[] Lines { get; set; }
 
@@ -444,7 +456,7 @@ namespace HyperCard
             return string.Format("{0} : {1}", Type, Name);
         }
 
-        public static void ProcessPartContents(IPartContainer card, BigEndianBinaryReader reader, Dictionary<int, string> backgroundOverrides)
+        public static void ProcessPartContents(IPartContainer card, BigEndianBinaryReader reader, Dictionary<int, FormattedText> backgroundOverrides)
         {
             short partContentID = Math.Abs(reader.ReadInt16());
             short partContentSize = reader.ReadInt16();
@@ -453,31 +465,37 @@ namespace HyperCard
             {
                 byte partContentType = reader.ReadByte();
 
-                if (partContentType == 128)
+                short[] formatting = null;
+
+                if ((partContentType & 0x80) == 0x80)
                 {
-                    byte prefixCount = reader.ReadByte();   // appears to be size of data minus one
-                    reader.ReadBytes(prefixCount - 2);      // read the unknown data
-                    partContentSize -= (short)(prefixCount - 1);
-                    partContentType = 0;    // now that we've skipped the unknown data we can parse as normal
+                    int size = ((partContentType & 0x7f) << 8) | reader.ReadByte();
+                    formatting = new short[(size - 2) / 2];
+                    for (int i = 0; i < (size - 2) / 4; i++)
+                    {
+                        short textPosition = reader.ReadInt16();
+                        short styleId = reader.ReadInt16();
+                        formatting[i * 2] = textPosition;
+                        formatting[i * 2 + 1] = styleId;
+                        Console.WriteLine($"Syle {styleId} at text position {textPosition}");
+                    }
+
+                    partContentSize -= (short)(size - 1);
                 }
 
-                if (partContentType == 0)
+                string text = Utilities.FromMacRoman(reader.ReadBytes(partContentSize - 1), partContentSize - 1);
+
+                var part = card.GetPartFromID(partContentID);
+
+                if (part != null)
                 {
-                    string temp = Utilities.FromMacRoman(reader.ReadBytes(partContentSize - 1), partContentSize - 1);
-
-                    var part = card.GetPartFromID(partContentID);
-
-                    if (part != null)
-                    {
-                        part.Contents = temp;
-                        if (temp.Contains("\r")) part.Lines = temp.Split(new char[] { '\r' });
-                    }
-                    else if (backgroundOverrides != null)
-                    {
-                        backgroundOverrides.Add(partContentID, temp);
-                    }
+                    part.Contents = new FormattedText(text, formatting);
+                    if (text.Contains("\r")) part.Lines = text.Split(new char[] { '\r' });
                 }
-                else reader.Position += (partContentSize - 1);
+                else if (backgroundOverrides != null)
+                {
+                    backgroundOverrides.Add(partContentID, new FormattedText(text, formatting));
+                }
             }
 
             if ((reader.Position % 2) != 0) reader.Position += (reader.Position % 2);

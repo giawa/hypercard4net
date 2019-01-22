@@ -135,8 +135,8 @@ namespace Player
 
             string fontFamily = "Arial";
 
-            string[] lines = (stack.CurrentCard.BackgroundOverrides.ContainsKey(part.ID) ? stack.CurrentCard.BackgroundOverrides[part.ID].Split(new char[] { '\r' }) : part.Lines);
-            if (lines == null && string.IsNullOrWhiteSpace(part.Contents)) return;
+            string[] lines = (stack.CurrentCard.BackgroundOverrides.ContainsKey(part.ID) ? stack.CurrentCard.BackgroundOverrides[part.ID].Text.Split(new char[] { '\r' }) : part.Lines);
+            if (lines == null && string.IsNullOrWhiteSpace(part.Contents.Text)) return;
 
             using (Brush blackBrush = new SolidBrush(((int)part.TextStyle & 2048) == 2048 ? Color.Gray : Color.Black))
             using (Font fieldFont = MacFont.GetFont(fontFamily, part.TextSize, (FontStyle)(((int)part.TextStyle >> 8) & 7)))
@@ -157,7 +157,7 @@ namespace Player
                 }
                 else
                 {
-                    RenderTextLine(blackBrush, fieldFont, part, part.Contents, part.Rect.Top, g);
+                    RenderTextLine(blackBrush, fieldFont, part, part.Contents.Text, part.Rect.Top, g);
                 }
             }
         }
@@ -217,7 +217,7 @@ namespace Player
             // check if this part is not visible
             if (((byte)part.Flags & 0x80) == 0x80) return;
 
-            bool highlight = (stack.CurrentCard.BackgroundOverrides.ContainsKey(part.ID) ? stack.CurrentCard.BackgroundOverrides[part.ID] == "1" : part.Highlight);
+            bool highlight = (stack.CurrentCard.BackgroundOverrides.ContainsKey(part.ID) ? stack.CurrentCard.BackgroundOverrides[part.ID].Text == "1" : part.Highlight);
 
             if (!cachedParts.ContainsKey(part) || part.Dirty)
             {
